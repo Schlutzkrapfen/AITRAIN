@@ -2,16 +2,12 @@ import sys
 from pathlib import Path
 import shutil
 
-# Use pathlib for cleaner path handling
 script_directory = Path(sys.argv[0]).resolve().parent
-
-
-IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 
 def images_have_labels(image_files,label_files,input_dir) :
     """Check that every image in the directory has a corresponding .txt label file."""
 
-    unlabeled = image_files - label_files
+    unlabeled = image_files.stem - label_files.stem
     missing_labels =  []
     if unlabeled:
         for name in sorted(unlabeled):
@@ -23,17 +19,10 @@ def images_have_labels(image_files,label_files,input_dir) :
         print("All images have labels.")
     return missing_labels
 
-    
-
-def get_images(directory:Path) :
-    return   {f.stem for f in directory.iterdir() if f.suffix.lower() in IMAGE_EXTENSIONS}
-
-def get_text_files(directory:Path):
-    return {f.stem for f in directory.iterdir() if f.suffix.lower() == ".txt"}
 def labels_have_images(image_files,label_files,text_dir) :
     """Check that every image in the directory has a corresponding .txt label file."""
 
-    unlabeled =  label_files - image_files
+    unlabeled =  label_files.stem - image_files.stem
     missing_picture = [] 
     if unlabeled:
         for name in sorted(unlabeled):
@@ -44,6 +33,7 @@ def labels_have_images(image_files,label_files,text_dir) :
     return missing_picture
 
 def move_to_trash_folder(paths,trash_folder,name="file"):
+    '''moves file to a folder'''
     for path in paths:
         if path.exists():
             trash_folder.mkdir(parents=True, exist_ok=True) 

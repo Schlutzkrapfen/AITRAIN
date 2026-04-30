@@ -6,18 +6,20 @@ from pathlib import Path
 # Allow imports from the src/ folder
 USER_DATA_DIR = 'user_data' 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
-from controll import get_images, get_text_files,images_have_labels,move_to_trash_folder, labels_have_images
+from controll import images_have_labels,move_to_trash_folder, labels_have_images
+from helper_functions import get_images_names, get_text_files_names, get_label_path, get_images_path
 
-input_dir = Path("./InputFolder/images")
-text_dir = Path("./InputFolder/labels")
+base_dir = Path("./InputFolder")
+input_dir = base_dir / "images"
+text_dir = base_dir / "labels"
 trash_folder = Path("./Trash")
 
 def check():
-    images_path = get_images(input_dir)
-    if (not images_path  ):
+    images_path = get_images_names(input_dir)
+    if (not images_path):
         print("No Images in Folder")
         return
-    text_path = get_text_files(text_dir)
+    text_path = get_text_files_names(text_dir)
     if (not text_path):
         print("no Labels in Folder")
         return
@@ -50,4 +52,10 @@ def check():
             else:
                 print("Invalid input, please enter r, n or y")
         
+def split():
+    labels =  get_label_path(input_dir)
+    images = get_images_path(text_dir)
+    print(labels)
+
 check()
+split()
