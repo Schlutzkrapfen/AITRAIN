@@ -427,3 +427,11 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+
+Models
+
+*.pt
+data.yaml
+runs/*
+venv/*
