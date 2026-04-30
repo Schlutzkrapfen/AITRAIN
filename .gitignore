@@ -438,4 +438,5 @@ venv/*
 InputFolder/*
 images/*
 labels/*
-
+classes.txt
+notes.json
