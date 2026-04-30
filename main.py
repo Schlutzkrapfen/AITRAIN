@@ -12,7 +12,14 @@ text_dir = Path("./InputFolder/labels")
 trash_folder = Path("./InputFolder/Trash")
 def check():
     images_path = get_images(input_dir)
+    if (not images_path  ):
+        print("No Images in Folder")
+        return
     text_path = get_text_files(text_dir)
+    if (not text_path):
+        print("no Labels in Folder")
+        return
+    
     single_images = images_have_labels(images_path,text_path,input_dir)
     if len(single_images) > 0:
         while True:

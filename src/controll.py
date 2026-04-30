@@ -23,6 +23,7 @@ def images_have_labels(image_files,label_files,input_dir) :
         print("All images have labels.")
     return missing_labels
 
+    
 
 def get_images(directory:Path) :
     return   {f.stem for f in directory.iterdir() if f.suffix.lower() in IMAGE_EXTENSIONS}
