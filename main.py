@@ -15,13 +15,18 @@ def check():
     text_path = get_text_files(text_dir)
     single_images = images_have_labels(images_path,text_path,input_dir)
     if len(single_images) > 0:
-        choice = input(f"Missing {len(single_images)} label/s found. Remove (r) image/s, stop (n), or Continue (Y)? ").strip().lower()
-        if choice == "r":
-            move_to_trash_folder(single_images, "image")
-        elif choice == "n":
-            sys.exit(0)          
-        elif choice == "y":
-            pass
+        while True:
+            choice = input(f"Missing {len(single_images)} label/s found. Remove (r) image/s, stop (n), or Continue (Y)? ").strip().lower()
+            if choice == "r":
+                move_to_trash_folder(single_images, "image")
+                return
+            elif choice == "n":
+                sys.exit(0)          
+            elif choice == "y":
+                pass
+                return
+            else:
+                print("Invalid input, please enter r, n or y")
     single_labels = labels_have_images(images_path,text_path,text_dir)
     if len(single_labels) > 0:
         while True:
