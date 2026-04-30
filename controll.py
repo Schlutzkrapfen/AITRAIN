@@ -55,8 +55,8 @@ def main():
     images_path = get_images(input_dir)
     text_path = get_text_files(text_dir)
     single_images = images_have_labels(images_path,text_path)
-    #if len(single_images) > 0:
-    #    move_to_trash_folder(single_images, "images")
+    if len(single_images) > 0:
+        move_to_trash_folder(single_images, "images")
 
     single_labels = labels_have_images(images_path,text_path)
     if len(single_labels) > 0:
