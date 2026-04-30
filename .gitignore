@@ -435,3 +435,7 @@ Models
 data.yaml
 runs/*
 venv/*
+InputFolder/*
+images/*
+labels/*
+
