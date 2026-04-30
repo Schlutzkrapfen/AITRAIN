@@ -45,9 +45,7 @@ def labels_have_images(image_files,label_files) -> bool:
 
 def main():
     images_path = get_images(input_dir)
-    print(images_path)
     text_path = get_text_files(text_dir)
-    print(text_path)
     images_have_labels(images_path,text_path)
     labels_have_images(images_path,text_path)
 
