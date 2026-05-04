@@ -8,7 +8,7 @@ results = model.train(
     data='data.yaml', 
   epochs=1000 ,
   patience=100 ,
-  batch=8 ,
+  batch=6 ,
   imgsz=1280,
   hsv_h=0.0,
     hsv_s=0.5,
@@ -22,4 +22,5 @@ results = model.train(
     cutmix = 0.2,
     erasing=0.4,
     shear=40,
+    auto_augment=True,
 )
