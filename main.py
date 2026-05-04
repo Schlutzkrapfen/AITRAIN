@@ -59,3 +59,5 @@ def split():
 
 check()
 split()
+#make_yaml()
+#train()
