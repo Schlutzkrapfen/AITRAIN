@@ -8,9 +8,9 @@ script_directory = Path(sys.argv[0]).resolve().parent
 def images_have_labels(image_files,label_files,input_dir) :
     """Check that every image in the directory has a corresponding .txt label file."""
 
-    image_stems = {f.stem for f in image_files}
-    label_stems = {f.stem for f in label_files}
-    unlabeled = image_files - label_files
+    image_stems = {Path(f).stem for f in image_files}
+    label_stems = {Path(f).stem for f in label_files}
+    unlabeled = image_stems - label_stems
     missing_labels =  []
     if unlabeled:
         for name in sorted(unlabeled):
@@ -34,7 +34,9 @@ def check_if_labels_empty(labels_path):
 def labels_have_images(image_files,label_files,text_dir) :
     """Check that every image in the directory has a corresponding .txt label file."""
 
-    unlabeled =  label_files.stem - image_files.stem
+    image_stems = {Path(f).stem for f in image_files}
+    label_stems = {Path(f).stem for f in label_files}
+    unlabeled = label_stems - image_stems
     missing_picture = [] 
     if unlabeled:
         for name in sorted(unlabeled):

@@ -30,6 +30,7 @@ def check():
             choice = input(f"Missing {len(single_images)} label/s found. Remove (r) image/s, stop (n), or Continue (Y)? ").strip().lower()
             if choice == "r":
                 move_to_trash_folder(single_images,trash_folder, "image")
+                images_path = [f for f in images_path if f not in single_images] 
                 break
             elif choice == "n":
                 sys.exit(0)          
@@ -44,6 +45,7 @@ def check():
             choice = input(f"Missing {len(single_labels)} image/s found. Remove (r) label/s, stop (n), or Continue (Y)? ").strip().lower()
             if choice == "r":
                 move_to_trash_folder(single_labels,trash_folder ,"label")
+                text_path = [f for f in text_path if f not in single_labels] 
                 break
             elif choice == "n":
                 sys.exit(0)          
@@ -51,7 +53,8 @@ def check():
                 break
             else:
                 print("Invalid input, please enter r, n or y")
-    check_if_labels_empty(text_path)
+
+    check_if_labels_empty(get_label_path(text_dir))
     
     
     
