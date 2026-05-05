@@ -57,7 +57,7 @@ def check():
                 print("Invalid input, please enter r, n or y")
 
     check_if_labels_empty(get_label_path(text_dir))
-    chec_val_and_train_dublicates(,input_dir)
+    chec_val_and_train_dublicates(train_dir,val_dir)
     
     
     
