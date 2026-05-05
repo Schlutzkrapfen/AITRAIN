@@ -46,6 +46,11 @@ def labels_have_images(image_files,label_files,text_dir) :
         print("All labels have Images.")
     return missing_picture
 
+def chec_val_and_train_dublicates(images_path,val_path):
+    '''Checks if any labels are in train and Label class'''
+    overlap = images_path & val_path
+    print(f"Direct overlap: {len(overlap)}")
+    pass
 def move_to_trash_folder(paths,trash_folder,name="file"):
     '''moves file to a folder'''
     for path in paths:
