@@ -57,8 +57,30 @@ def check():
             else:
                 print("Invalid input, please enter r, n or y")
 
-    check_if_labels_empty(get_label_path(text_dir))
-    chec_val_and_train_dublicates(train_dir,val_dir)
+    empty_labels =check_if_labels_empty(get_label_path(text_dir))
+    if len(empty_labels) > 0:
+        while True:
+            choice = input(f"{len(empty_labels)} found. Remove (r) label/s and Picture/s, stop (n), or Continue (Y)? ").strip().lower()
+            if choice == "r":
+                for label in empty_labels:
+                    stem = Path(label).stem
+                    for split in ["train", "val"]:
+                        for ext in [".jpg", ".jpeg", ".png"]:
+                            img = input_dir / split / (stem + ext)
+                            if img.exists(): 
+                                move_to_trash_folder(img,trash_folder,"image")
+                move_to_trash_folder(single_labels,trash_folder ,"label")
+                text_path = [f for f in text_path if f not in single_labels] 
+                break
+            elif choice == "n":
+                sys.exit(0)          
+            elif choice == "y":
+                break
+            else:
+                print("Invalid input, please enter r, n or y")
+
+
+    #chec_val_and_train_dublicates(train_dir,val_dir)
     
     
     

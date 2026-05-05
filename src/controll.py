@@ -30,6 +30,7 @@ def check_if_labels_empty(labels_path):
 
    print(f"Empty labels: {len(empty)}")
    print(empty[:10])
+   return empty
 
 def labels_have_images(image_files,label_files,text_dir) :
     """Check that every image in the directory has a corresponding .txt label file."""
