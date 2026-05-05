@@ -48,6 +48,11 @@ def labels_have_images(image_files,label_files,text_dir) :
 
 def chec_val_and_train_dublicates(images_path,val_path):
     '''Checks if any labels are in train and Label class'''
+    train_files = set(os.listdir(images_path))
+    val_files = set(os.listdir(val_path))
+
+    overlap = train_files & val_files
+    print(f"Direct overlap: {len(overlap)}")
     overlap = images_path & val_path
     print(f"Direct overlap: {len(overlap)}")
     pass
