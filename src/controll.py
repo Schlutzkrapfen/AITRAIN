@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import shutil
+import os
 
 script_directory = Path(sys.argv[0]).resolve().parent
 
@@ -18,6 +19,14 @@ def images_have_labels(image_files,label_files,input_dir) :
     else:
         print("All images have labels.")
     return missing_labels
+def check_if_files_have_any_labels(labels_path):
+   empty = []
+   for labels in labels_path:
+       if os.path.getsize(labels) == 0:
+           empty.append(labels)
+
+   print(f"Empty labels: {len(empty)}")
+   print(empty[:10])
 
 def labels_have_images(image_files,label_files,text_dir) :
     """Check that every image in the directory has a corresponding .txt label file."""
