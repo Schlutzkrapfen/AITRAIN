@@ -438,5 +438,6 @@ venv/*
 InputFolder/*
 images/*
 labels/*
+Trash/*
 classes.txt
 notes.json
