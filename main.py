@@ -13,6 +13,7 @@ base_dir = Path("./InputFolder")
 input_dir = base_dir / "images"
 text_dir = base_dir / "labels"
 trash_folder = Path("./Trash")
+input_dir = Path("./images")
 train_dir = input_dir / "train"
 val_dir = input_dir / "val"
 
