@@ -32,17 +32,16 @@ def check_if_labels_empty(labels_path):
    print(empty[:10])
    return empty
 
-def labels_have_images(image_files,label_files,text_dir) :
+def labels_have_images(image_files, label_files, text_dir):
     """Check that every image in the directory has a corresponding .txt label file."""
-
-    image_stems = {Path(f).stem for f in image_files}
-    label_stems = {Path(f).stem for f in label_files}
+    image_stems = {Path(f).name for f in image_files}
+    label_stems = {Path(f).name for f in label_files}
     unlabeled = label_stems - image_stems
-    missing_picture = [] 
+    missing_picture = []
     if unlabeled:
         for name in sorted(unlabeled):
             print(f"Missing Image: {name}")
-            missing_picture.append(Path(text_dir)/(name+".txt"))
+            missing_picture.append(Path(text_dir) / (name + ".txt"))
     else:
         print("All labels have Images.")
     return missing_picture
@@ -60,8 +59,10 @@ def chec_val_and_train_dublicates(images_path,val_path):
 def move_to_trash_folder(paths,trash_folder,name="file"):
     '''moves file to a folder'''
     for path in paths:
-        if path.exists():
+        if path.is_file():
             trash_folder.mkdir(parents=True, exist_ok=True) 
             shutil.move(str(path), trash_folder / path.name)
-    print(f"moved every {name} that has no pair was moved to {trash_folder}")
+        else:
+            print(f"ERROR: {path} not found")
+    print(f"moved every {name} that has no pair to {trash_folder}")
 

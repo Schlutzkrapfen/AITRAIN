@@ -13,9 +13,9 @@ base_dir = Path("./InputFolder")
 input_dir = base_dir / "images"
 text_dir = base_dir / "labels"
 trash_folder = Path("./Trash")
-input_dir = Path("./images")
-train_dir = input_dir / "train"
-val_dir = input_dir / "val"
+#input_dir = Path("./images")
+#train_dir = input_dir / "train"
+#val_dir = input_dir / "val"
 
 def check():
     images_path = get_images_names(input_dir)
@@ -79,8 +79,6 @@ def check():
             else:
                 print("Invalid input, please enter r, n or y")
 
-
-    #chec_val_and_train_dublicates(train_dir,val_dir)
     
     
     

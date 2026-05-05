@@ -1,6 +1,6 @@
 
 from pathlib import Path
-
+import os
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 
 def get_images_path(directory:Path) :
@@ -13,8 +13,17 @@ def get_label_path(directory:Path):
 
 def get_images_names(directory:Path) :
     '''Gets all the names of images out of a folder endings png, jpg and jpeg'''
-    return   {f.stem for f in directory.iterdir() if f.suffix.lower() in IMAGE_EXTENSIONS}
+    return {
+        f.name[:-len(f.suffix)]
+        for f in directory.iterdir()
+        if f.suffix.lower() in IMAGE_EXTENSIONS
+    }
 
-def get_text_files_names(directory:Path):
+def get_text_files_names(directory: Path):
     '''gets all the names of labels in a folder ending (txt)'''
-    return {f.stem for f in directory.iterdir() if f.suffix.lower() == ".txt"}
+    test = []
+    for f in directory.iterdir():
+        if f.suffix.lower() == ".txt":
+            test.append(f.name[:-len(f.suffix)])
+    return test
+    
