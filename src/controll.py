@@ -2,21 +2,30 @@ import sys
 from pathlib import Path
 import shutil
 import os
-
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 script_directory = Path(sys.argv[0]).resolve().parent
 
 def images_have_labels(image_files,label_files,input_dir) :
     """Check that every image in the directory has a corresponding .txt label file."""
 
-    image_stems = {Path(f).stem for f in image_files}
-    label_stems = {Path(f).stem for f in label_files}
+    print(image_files)
+    image_stems = {Path(f).name for f in image_files}
+    label_stems = {Path(f).name for f in label_files}
     unlabeled = image_stems - label_stems
     missing_labels =  []
     if unlabeled:
         for name in sorted(unlabeled):
-            full_path = next(input_dir.glob(f"{name}.*"), None)
-            print(f"Missing label: {full_path}")
-            missing_labels.append(full_path)
+           print(f"Missing Label: {name}")
+            
+           found = None
+           for ext in IMAGE_EXTENSIONS:
+                   if (Path(input_dir) / (name + ext)).exists():
+                       found = Path(input_dir) / (name + ext)
+                       break
+                
+           if(found ==None):
+               continue
+           missing_labels.append(found)
             
     else:
         print("All images have labels.")
