@@ -11,7 +11,7 @@ def objective(trial):
         epochs=40,
         imgsz=1280,
         batch=6,
-        patience=0,
+        patience=100,
         verbose=False,
 
         # Augmentation params to tune
@@ -45,7 +45,7 @@ def objective(trial):
 # ── Search ──────────────────────────────────────────────────────────────────
 
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=50)  # start with 50, increase later
+study.optimize(objective, n_trials=300)  
 
 # ── Save results immediately ─────────────────────────────────────────────────
 
