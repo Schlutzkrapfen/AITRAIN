@@ -63,3 +63,4 @@ def split(input_dir, text_dir, trash_folder):
     if choice != "n":
         move_to_trash_folder(images,trash_folder,"Picutre")
         move_to_trash_folder(labels,trash_folder,"label")
+      
