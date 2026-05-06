@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
-import shutil
 import os
+from helper_functions import get_images_names, get_text_files_names, get_label_path, get_images_path, move_to_trash_folder
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 script_directory = Path(sys.argv[0]).resolve().parent
 
@@ -65,13 +65,64 @@ def chec_val_and_train_dublicates(images_path,val_path):
     overlap = images_path & val_path
     print(f"Direct overlap: {len(overlap)}")
     pass
-def move_to_trash_folder(paths,trash_folder,name="file"):
-    '''moves file to a folder'''
-    for path in paths:
-        if path.is_file():
-            trash_folder.mkdir(parents=True, exist_ok=True) 
-            shutil.move(str(path), trash_folder / path.name)
-        else:
-            print(f"ERROR: {path} not found")
-    print(f"moved every {name} that has no pair to {trash_folder}")
 
+def _prompt_action(count: int, item_type: str) -> str:
+    """Ask user how to handle orphaned files. Returns 'r'(remove), 'y'(continue), or exits."""
+    while True:
+        choice = input(
+            f"{count} orphaned {item_type}(s) found. Remove (r), stop (n), or continue (y)? "
+        ).strip().lower()
+        if choice in ("r", "y"):
+            return choice
+        elif choice == "n":
+            sys.exit(0)
+        print("Invalid input, please enter r, n or y")
+
+def check_if_images_labels_exits(images_path,text_path):
+    '''checks if any labels or images exist'''
+    if not images_path:
+        print("No images in folder")
+        sys.exit(0)
+        return
+
+    if not text_path:
+        print("No labels in folder")
+        sys.exit(0)
+        return
+
+def check(input_dir, text_dir, trash_folder):
+    """Validate image/label pairs and prompt user to resolve mismatches before training."""
+    images_path = get_images_names(input_dir)
+    text_path = get_text_files_names(text_dir)
+    check_if_images_labels_exits(images_path,text_path)
+    # Check images missing labels
+    single_images = images_have_labels(images_path, text_path, input_dir)
+    if single_images:
+        if _prompt_action(len(single_images), "image") == "r":
+            move_to_trash_folder(single_images, trash_folder, "image")
+            images_path = [f for f in images_path if f not in single_images]
+
+    # Check labels missing images
+    single_labels = labels_have_images(images_path, text_path, text_dir)
+    if single_labels:
+        if _prompt_action(len(single_labels), "label") == "r":
+            move_to_trash_folder(single_labels, trash_folder, "label")
+            text_path = [f for f in text_path if f not in single_labels]
+
+    # Check empty label files
+    empty_labels = check_if_labels_empty(get_label_path(text_dir))
+    if empty_labels:
+        if _prompt_action(len(empty_labels), "empty label") == "r":
+            for label in empty_labels:
+                stem = Path(label).stem
+                for split in ["train", "val"]:
+                    for ext in [".jpg", ".jpeg", ".png"]:
+                        img = input_dir / split / (stem + ext)
+                        if img.exists():
+                            move_to_trash_folder(img, trash_folder, "image")
+            move_to_trash_folder(empty_labels, trash_folder, "label")  # fixed bug: was single_labels
+            text_path = [f for f in text_path if f not in empty_labels]
+    
+    images_path = get_images_names(input_dir)
+    text_path = get_text_files_names(text_dir)
+    check_if_images_labels_exits(images_path,text_path)

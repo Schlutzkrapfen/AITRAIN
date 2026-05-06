@@ -1,6 +1,7 @@
 
 from pathlib import Path
 import os
+import shutil
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 
 def get_images_path(directory:Path) :
@@ -26,4 +27,13 @@ def get_text_files_names(directory: Path):
         if f.suffix.lower() == ".txt":
             test.append(f.name[:-len(f.suffix)])
     return test
-    
+
+def move_to_trash_folder(paths,trash_folder,name="file"):
+    '''moves file to a folder'''
+    for path in paths:
+        if path.is_file():
+            trash_folder.mkdir(parents=True, exist_ok=True) 
+            shutil.move(str(path), trash_folder / path.name)
+        else:
+            print(f"ERROR: {path} not found")
+    print(f"moved every {name} that has no pair to {trash_folder}")
