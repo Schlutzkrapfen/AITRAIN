@@ -24,3 +24,5 @@ def split():
    '''splits the images and labes in train and val  different'''
    make_folder_structer()
 
+
+

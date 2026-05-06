@@ -3,7 +3,6 @@ import os
 
 from pathlib import Path
 
-# Allow imports from the src/ folder
 USER_DATA_DIR = 'user_data' 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from controll import check
