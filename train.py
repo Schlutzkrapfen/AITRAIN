@@ -8,10 +8,10 @@ def objective(trial):
 
     results = model.train(
         data='data.yaml',
-        epochs=40,
+        epochs=300,
         imgsz=1280,
         batch=6,
-        patience=100,
+        patience=50,
         verbose=False,
 
         # Augmentation params to tune
