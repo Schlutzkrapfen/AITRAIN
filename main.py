@@ -15,6 +15,6 @@ trash_folder = Path("./Trash")
 
 
 check(input_dir,text_dir,trash_folder)
-split(trash_folder)
+split(input_dir,text_dir,trash_folder)
 #make_yaml()
 #train()
