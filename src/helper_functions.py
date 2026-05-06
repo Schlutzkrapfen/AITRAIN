@@ -30,10 +30,12 @@ def get_text_files_names(directory: Path):
 
 def move_to_trash_folder(paths,trash_folder,name="file"):
     '''moves file to a folder'''
+    if not isinstance(paths, list):
+        paths = [paths]
     for path in paths:
         if path.is_file():
             trash_folder.mkdir(parents=True, exist_ok=True) 
             shutil.move(str(path), trash_folder / path.name)
         else:
             print(f"ERROR: {path} not found")
-    print(f"moved every {name} that has no pair to {trash_folder}")
+    print(f"moved every {name} to {trash_folder}")
