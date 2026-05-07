@@ -29,33 +29,42 @@ What do you want to do?
 VALID_CHOICES = {"0", "1", "2", "3", "4", ""}
 def main():
     while True:
-        answer = input(MENU).strip()
+        while True:
+            answer = input(MENU).strip()
 
-        if answer in VALID_CHOICES:
-            answer = answer if answer != "" else "0" 
+            if answer in VALID_CHOICES:
+                answer = answer if answer != "" else "0" 
+                break
+
+            print(f"Invalid input '{answer}'. Please enter a number between 0 and 4.\n")
+
+        print(f"You chose: {answer}")
+
+        match answer:
+            case "0" :
+                if check_files_exist(input_dir,text_dir,trash_folder):
+                    split(input_dir,text_dir,trash_folder)
+                    make_yaml(classes_dir)
+                #train()
+                find_best_mAp50_95()
+                print("finished")
+                print("closing")
+                break
+            case "1":
+                check_files_exist(input_dir,text_dir,trash_folder)
+            case "2":
+                if check_files_exist(input_dir,text_dir,trash_folder):
+                    split(input_dir,text_dir,trash_folder)
+                    make_yaml(classes_dir)
+            case "3":
+                print("Training is currently unavailable.")
+            case "4":
+                find_best_mAp50_95()
+        print("finished")
+        answer = input("Do you want to do something else. N no, y yes: ").strip().lower()
+        if answer != "y":
+            print("closing")
             break
-
-        print(f"Invalid input '{answer}'. Please enter a number between 0 and 4.\n")
-
-    print(f"You chose: {answer}")
-
-    match answer:
-        case "0" | "":
-            if check_files_exist(input_dir,text_dir,trash_folder):
-              split(input_dir,text_dir,trash_folder)
-              make_yaml(classes_dir)
-            #train()
-            find_best_mAp50_95()
-        case "1":
-           check_files_exist(input_dir,text_dir,trash_folder)
-        case "2":
-           if check_files_exist(input_dir,text_dir,trash_folder):
-              split(input_dir,text_dir,trash_folder)
-              make_yaml(classes_dir)
-        case "3":
-            print("Training is currently unavailable.")
-        case "4":
-            find_best_mAp50_95()
 
 if __name__ == "__main__":
     main()
