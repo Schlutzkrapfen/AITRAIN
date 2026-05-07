@@ -8,7 +8,7 @@ script_directory = Path(os.path.dirname(os.path.abspath(sys.argv[0])))
 
 FOLDER_STRUCTURE = [
     "images/train", "images/val",
-    "labels/train", "labels/val"   # fixed typo: "label" → "labels"
+    "labels/train", "labels/val"   
 ]
 
 def _make_folder_structure(trash_folder):

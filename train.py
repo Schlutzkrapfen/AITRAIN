@@ -45,7 +45,7 @@ def objective(trial):
 # ── Search ──────────────────────────────────────────────────────────────────
 
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=30)  
+study.optimize(objective, n_trials=100)  
 
 # ── Save results immediately ─────────────────────────────────────────────────
 

@@ -90,7 +90,7 @@ def check_if_images_labels_exits(images_path,text_path):
         sys.exit(0)
         return
 
-def check(input_dir, text_dir, trash_folder):
+def check_files_exist(input_dir, text_dir, trash_folder):
     """Validate image/label pairs and prompt user to resolve mismatches before training."""
     images_path = get_images_names(input_dir)
     text_path = get_text_files_names(text_dir)
