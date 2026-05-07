@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from controll import check_files_exist
 from split import  split
 from make_yaml  import make_yaml
-from summery import find_best_mAp50_95
+from summery import make_summery
 
 
 base_dir = Path("./InputFolder")
@@ -46,7 +46,7 @@ def main():
                     split(input_dir,text_dir,trash_folder)
                     make_yaml(classes_dir)
                 #train()
-                find_best_mAp50_95()
+                make_summery()
                 print("finished")
                 print("closing")
                 break
@@ -59,7 +59,7 @@ def main():
             case "3":
                 print("Training is currently unavailable.")
             case "4":
-                find_best_mAp50_95()
+                make_summery()
         print("finished")
         answer = input("Do you want to do something else. N no, y yes: ").strip().lower()
         if answer != "y":
