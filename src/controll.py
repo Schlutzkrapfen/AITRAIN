@@ -8,7 +8,6 @@ script_directory = Path(sys.argv[0]).resolve().parent
 def images_have_labels(image_files,label_files,input_dir) :
     """Check that every image in the directory has a corresponding .txt label file."""
 
-    print(image_files)
     image_stems = {Path(f).name for f in image_files}
     label_stems = {Path(f).name for f in label_files}
     unlabeled = image_stems - label_stems

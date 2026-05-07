@@ -18,9 +18,9 @@ trash_folder = Path("./Trash")
 classes_dir =  base_dir/"classes.txt"
 
 def main():
-    if check_files_exist(input_dir,text_dir,trash_folder):
-        split(input_dir,text_dir,trash_folder)
-        make_yaml(classes_dir)
+  #  if check_files_exist(input_dir,text_dir,trash_folder):
+  #      split(input_dir,text_dir,trash_folder)
+  #      make_yaml(classes_dir)
     #train()
     find_best_mAp50_95()
 
