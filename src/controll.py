@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 import os
-from helper_functions import get_images_names, get_text_files_names, get_label_path, get_images_path, move_to_trash_folder
+from helper_functions import get_images_names, get_text_files_names, get_label_path, move_to_trash_folder
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 script_directory = Path(sys.argv[0]).resolve().parent
 
@@ -82,19 +82,21 @@ def check_if_images_labels_exits(images_path,text_path):
     '''checks if any labels or images exist'''
     if not images_path:
         print("No images in folder")
-        sys.exit(0)
-        return
+        return False
+
 
     if not text_path:
         print("No labels in folder")
-        sys.exit(0)
-        return
+        return False
+    return True
 
 def check_files_exist(input_dir, text_dir, trash_folder):
     """Validate image/label pairs and prompt user to resolve mismatches before training."""
     images_path = get_images_names(input_dir)
     text_path = get_text_files_names(text_dir)
-    check_if_images_labels_exits(images_path,text_path)
+    if not check_if_images_labels_exits(images_path,text_path):
+        return False
+        
     # Check images missing labels
     single_images = images_have_labels(images_path, text_path, input_dir)
     if single_images:
@@ -125,4 +127,7 @@ def check_files_exist(input_dir, text_dir, trash_folder):
     
     images_path = get_images_names(input_dir)
     text_path = get_text_files_names(text_dir)
-    check_if_images_labels_exits(images_path,text_path)
+    if not check_if_images_labels_exits(images_path,text_path):
+        return False
+    else:
+        return True
