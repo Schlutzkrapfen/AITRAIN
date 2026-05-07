@@ -5,7 +5,7 @@ def find_best_mAp50_95():
     results = []
     try:
         for folder in sorted(os.listdir(detect_folder)):
-            csv_path = os.path.join(detect_folder, folder, 'results.csv')  # fix here
+            csv_path = os.path.join(detect_folder, folder, 'results.csv')  
             if os.path.exists(csv_path):
                 df = pd.read_csv(csv_path)
                 df.columns = df.columns.str.strip()
