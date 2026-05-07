@@ -5,18 +5,26 @@ def find_best_mAp50_95():
     results = []
     try:
         for folder in sorted(os.listdir(detect_folder)):
-            csv_path = os.path.join(folder, 'results.csv')
+            csv_path = os.path.join(detect_folder, folder, 'results.csv')  # fix here
             if os.path.exists(csv_path):
                 df = pd.read_csv(csv_path)
                 df.columns = df.columns.str.strip()
-                try:
+                if 'metrics/mAP50-95(B)' in df.columns:
                     best = df['metrics/mAP50-95(B)'].max()
                     results.append({'run': folder, 'mAP50-95': round(best, 4)})
-                except: pass
-        df = pd.DataFrame(results).sort_values('mAP50-95', ascending=False)
-        print(df.to_string(index=False))
+                else:
+                    print(f"Warning: no mAP50-95 column in {csv_path}")
+
     except FileNotFoundError:
-        print(f"File not found {detect_folder}")
+        print(f"Folder not found: {detect_folder}")
+        return
+
+    if not results:
+        print("No results found.")
+        return
+
+    df = pd.DataFrame(results).sort_values('mAP50-95', ascending=False)
+    print(df.to_string(index=False))
 
 
 
