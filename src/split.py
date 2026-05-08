@@ -19,7 +19,7 @@ def _make_folder_structure(trash_folder):
         try:
             os.makedirs(full_path)
         except FileExistsError:
-            print(f"Directory for files already exists.")
+            print(f"Directory for files already exists, for train and val data")
             if choice == None:
                 choice = input("Remove files inside it? No (N), Yes (y): ").strip().lower()
             if choice == "y":
