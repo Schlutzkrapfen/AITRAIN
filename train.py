@@ -5,9 +5,15 @@ import csv
 from datetime import datetime
 from ultralytics import YOLO
 
+
+trails = 2
+epochs_param_finding = 10
+yolo_model = YOLO('yolov8n.pt')
+
 # ── Log file setup ────────────────────────────────────────────────────────────
 LOG_FILE = 'trials_log.csv'
 SUMMARY_FILE = 'trials_summary.json'
+
 
 # Create CSV with header
 with open(LOG_FILE, 'w', newline='') as f:
@@ -24,7 +30,7 @@ all_trials_data = []
 
 def objective(trial):
     start_time = datetime.now()
-    model = YOLO('yolov8n.pt')
+    model = yolo_model
 
     # Suggest hyperparameters for this trial
     params = dict(
@@ -44,7 +50,7 @@ def objective(trial):
 
     results = model.train(
         data='data.yaml',
-        epochs=10,
+        epochs=epochs_param_finding,
         imgsz=1280,
         batch=6,
         patience=50,
@@ -96,7 +102,7 @@ def objective(trial):
     }
 
     with open(os.path.join(runs_dir, run_folder, 'trial_info.json'), 'w') as f:
-        json.dump(run_info, f, indent=2)
+        json.dump(run_info, f, indent=trails)
 
     all_trials_data.append(run_info)
 
@@ -142,7 +148,7 @@ print(f"📋 Full summary saved to: {SUMMARY_FILE}")
 
 # ── Final training using the best hyperparameters found ───────────────────────
 best = study.best_params
-model = YOLO('yolov8m.pt')
+model = yolo_model
 model.train(
     data='data.yaml',
     epochs=1000,
