@@ -121,7 +121,7 @@ def check_files_exist(input_dir, text_dir, trash_folder):
                         img = input_dir / split / (stem + ext)
                         if img.exists():
                             move_to_trash_folder(img, trash_folder, "image")
-            move_to_trash_folder(empty_labels, trash_folder, "label")  # fixed bug: was single_labels
+            move_to_trash_folder(empty_labels, trash_folder, "label")  
             text_path = [f for f in text_path if f not in empty_labels]
     
     images_path = get_images_names(input_dir)

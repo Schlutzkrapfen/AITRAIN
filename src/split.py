@@ -13,13 +13,15 @@ FOLDER_STRUCTURE = [
 
 def _make_folder_structure(trash_folder):
     """Create the required folder structure, prompting user to clear any that already exist."""
+    choice = None
     for path in FOLDER_STRUCTURE:
         full_path = script_directory / path
         try:
             os.makedirs(full_path)
         except FileExistsError:
-            print(f"Directory '{full_path}' already exists.")
-            choice = input("Remove files inside it? No (n), Yes (y): ").strip().lower()
+            print(f"Directory for files already exists.")
+            if choice == None:
+                choice = input("Remove files inside it? No (N), Yes (y): ").strip().lower()
             if choice == "y":
                 move_to_trash_folder(list(full_path.iterdir()), trash_folder, "file")
         except PermissionError:
