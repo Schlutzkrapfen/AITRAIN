@@ -24,7 +24,7 @@ all_trials_data = []
 
 def objective(trial):
     start_time = datetime.now()
-    model = YOLO('yolov8x.pt')
+    model = YOLO('yolov8n.pt')
 
     # Suggest hyperparameters for this trial
     params = dict(
@@ -44,12 +44,11 @@ def objective(trial):
 
     results = model.train(
         data='data.yaml',
-        epochs=300,
+        epochs=10,
         imgsz=1280,
         batch=6,
         patience=50,
         verbose=False,
-        # Fixed params — not part of the search
         hsv_h=0.0,
         hsv_s=0.0,
         flipud=0.0,
@@ -109,7 +108,7 @@ def objective(trial):
 
 # ── Run the hyperparameter search ─────────────────────────────────────────────
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=100)
+study.optimize(objective, n_trials=1)
 
 # ── Mark the best trial in its trial_info.json ────────────────────────────────
 best_num = study.best_trial.number
@@ -151,7 +150,6 @@ model.train(
     batch=6,
     imgsz=1280,
     **best,
-    # Fixed params — not part of the search
     hsv_h=0.0,
     hsv_s=0.0,
     flipud=0.0,
