@@ -6,9 +6,9 @@ from datetime import datetime
 from ultralytics import YOLO
 
 
-trails = 2
-epochs_param_finding = 10
-yolo_model = YOLO('yolov8n.pt')
+trails = 300
+epochs_param_finding = 300
+yolo_model = YOLO('yolov8x.pt')
 
 # ── Log file setup ────────────────────────────────────────────────────────────
 LOG_FILE = 'trials_log.csv'
@@ -142,10 +142,6 @@ summary = {
 with open(SUMMARY_FILE, 'w') as f:
     json.dump(summary, f, indent=2)
 
-print(f"\n🏆 Best trial: #{best_num} | mAP50: {study.best_value:.4f}")
-print(f"📊 Trial log saved to: {LOG_FILE}")
-print(f"📋 Full summary saved to: {SUMMARY_FILE}")
-
 # ── Final training using the best hyperparameters found ───────────────────────
 best = study.best_params
 model = yolo_model
@@ -163,3 +159,7 @@ model.train(
     auto_augment=False,
     optimizer='AdamW',
 )
+
+print(f"\n🏆 Best trial: #{best_num} | mAP50: {study.best_value:.4f}")
+print(f"📊 Trial log saved to: {LOG_FILE}")
+print(f"📋 Full summary saved to: {SUMMARY_FILE}")
