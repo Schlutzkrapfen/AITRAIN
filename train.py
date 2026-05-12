@@ -5,15 +5,15 @@ import csv
 from datetime import datetime
 from ultralytics import YOLO
 
-
-trails = 300
-epochs_param_finding = 300
-yolo_model = YOLO('yolov8x.pt')
+YOLO_MODEL = 'yolov8x.pt'
+YOLO_MODEL_FINAL = 'yolov8m.pt'
+TRIALS = 300
+EPOCHS_SEARCH = 300
+EPOCHS_FINAL = 1000
 
 # ── Log file setup ────────────────────────────────────────────────────────────
 LOG_FILE = 'trials_log.csv'
 SUMMARY_FILE = 'trials_summary.json'
-
 
 # Create CSV with header
 with open(LOG_FILE, 'w', newline='') as f:
@@ -30,7 +30,10 @@ all_trials_data = []
 
 def objective(trial):
     start_time = datetime.now()
-    model = yolo_model
+
+    # Create a fresh YOLO instance for every trial — reusing the same
+    # instance causes a KeyError: 'model' on the second train() call
+    model = YOLO(YOLO_MODEL)
 
     # Suggest hyperparameters for this trial
     params = dict(
@@ -50,11 +53,12 @@ def objective(trial):
 
     results = model.train(
         data='data.yaml',
-        epochs=epochs_param_finding,
+        epochs=EPOCHS_SEARCH,
         imgsz=1280,
         batch=6,
         patience=50,
         verbose=False,
+        # Fixed params — not part of the search
         hsv_h=0.0,
         hsv_s=0.0,
         flipud=0.0,
@@ -96,13 +100,13 @@ def objective(trial):
         'fixed_params': {
             'hsv_h': 0.0, 'hsv_s': 0.0, 'flipud': 0.0,
             'cutmix': 0.0, 'auto_augment': False, 'optimizer': 'AdamW',
-            'epochs': 300, 'imgsz': 1280, 'batch': 6, 'patience': 50
+            'epochs': EPOCHS_SEARCH, 'imgsz': 1280, 'batch': 6, 'patience': 50
         },
         'all_metrics': results.results_dict  # includes mAP50, mAP50-95, precision, recall
     }
 
     with open(os.path.join(runs_dir, run_folder, 'trial_info.json'), 'w') as f:
-        json.dump(run_info, f, indent=trails)
+        json.dump(run_info, f, indent=2)
 
     all_trials_data.append(run_info)
 
@@ -114,7 +118,7 @@ def objective(trial):
 
 # ── Run the hyperparameter search ─────────────────────────────────────────────
 study = optuna.create_study(direction='maximize')
-study.optimize(objective, n_trials=1)
+study.optimize(objective, n_trials=TRIALS)
 
 # ── Mark the best trial in its trial_info.json ────────────────────────────────
 best_num = study.best_trial.number
@@ -142,16 +146,20 @@ summary = {
 with open(SUMMARY_FILE, 'w') as f:
     json.dump(summary, f, indent=2)
 
+
 # ── Final training using the best hyperparameters found ───────────────────────
 best = study.best_params
-model = yolo_model
+
+# Fresh instance required here too — same reason as inside objective()
+model = YOLO(YOLO_MODEL_FINAL)
 model.train(
     data='data.yaml',
-    epochs=1000,
+    epochs=EPOCHS_FINAL,
     patience=100,
     batch=6,
     imgsz=1280,
     **best,
+    # Fixed params — not part of the search
     hsv_h=0.0,
     hsv_s=0.0,
     flipud=0.0,
