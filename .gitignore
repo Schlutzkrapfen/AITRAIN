@@ -441,3 +441,6 @@ labels/*
 Trash/*
 classes.txt
 notes.json
+trials_log.csv
+trials_summary.json
+
