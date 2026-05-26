@@ -8,7 +8,6 @@ from ultralytics import YOLO
 
 trails = 300
 epochs_param_finding = 300
-yolo_model = YOLO('yolov8x.pt')
 
 # ── Log file setup ────────────────────────────────────────────────────────────
 LOG_FILE = 'trials_log.csv'
@@ -30,23 +29,22 @@ all_trials_data = []
 
 def objective(trial):
     start_time = datetime.now()
-    model = yolo_model
+    model = YOLO('yolov8n.pt')  
 
-    # Suggest hyperparameters for this trial
     params = dict(
-        hsv_v     = trial.suggest_float('hsv_v',     0.1,  0.5),
-        degrees   = trial.suggest_float('degrees',   0,    20),
-        translate = trial.suggest_float('translate', 0.0,  0.2),
-        scale     = trial.suggest_float('scale',     0.05, 0.3),
-        shear     = trial.suggest_float('shear',     0.0,  10.0),
-        fliplr    = trial.suggest_float('fliplr',    0.0,  0.5),
-        mosaic    = trial.suggest_float('mosaic',    0.0,  0.3),
-        erasing   = trial.suggest_float('erasing',   0.1,  0.5),
-        lr0       = trial.suggest_float('lr0',       1e-4, 1e-2, log=True),
-        lrf       = trial.suggest_float('lrf',       0.001,0.1,  log=True),
-        cls       = trial.suggest_float('cls',       0.5,  3.0),
-        box       = trial.suggest_float('box',       5.0,  12.0),
-    )
+    hsv_v     = trial.suggest_float('hsv_v',     0.1,  0.25),
+    degrees   = trial.suggest_float('degrees',   0,    5),
+    translate = trial.suggest_float('translate', 0.05, 0.2),
+    scale     = trial.suggest_float('scale',     0.04, 0.30),  # keep wide, trial 338 proves it
+    shear     = trial.suggest_float('shear',     0.0,  5.0),   # loosened back, 280 shows mid-high can work
+    fliplr    = trial.suggest_float('fliplr',    0.2,  0.5),
+    mosaic    = trial.suggest_float('mosaic',    0.03, 0.25),
+    erasing   = trial.suggest_float('erasing',   0.1,  0.5),   # kept wide, insufficient data
+    lr0       = trial.suggest_float('lr0',       5e-5, 5e-4, log=True),  # most confident change
+    lrf       = trial.suggest_float('lrf',       0.001,0.08, log=True),  # loosened, trial 280 shows low lrf works
+    cls       = trial.suggest_float('cls',       2.3,  3.2),   # now confident enough to tighten
+    box       = trial.suggest_float('box',       4.5,  7.0),   # 8 trials all under 5.7
+)
 
     results = model.train(
         data='data.yaml',
@@ -66,16 +64,8 @@ def objective(trial):
 
     mAP50 = results.results_dict['metrics/mAP50(B)']
     duration = (datetime.now() - start_time).total_seconds() / 60
+    run_folder = str(results.save_dir)
 
-    # Find the most recently created run folder (= this trial's folder)
-    runs_dir = 'runs/detect'
-    all_folders = sorted(
-        os.listdir(runs_dir),
-        key=lambda x: os.path.getmtime(os.path.join(runs_dir, x))
-    )
-    run_folder = all_folders[-1]
-
-    # ── Append trial result to CSV ────────────────────────────────────────────
     with open(LOG_FILE, 'a', newline='') as f:
         writer = csv.writer(f)
         writer.writerow([
@@ -85,24 +75,23 @@ def objective(trial):
             start_time.strftime('%Y-%m-%d %H:%M:%S')
         ])
 
-    # ── Save a trial_info.json inside the run folder ──────────────────────────
     run_info = {
         'trial_number': trial.number,
         'mAP50': mAP50,
         'duration_minutes': round(duration, 2),
         'timestamp': start_time.strftime('%Y-%m-%d %H:%M:%S'),
-        'is_best': False,  # updated after all trials complete
+        'is_best': False,
         'params': params,
         'fixed_params': {
             'hsv_h': 0.0, 'hsv_s': 0.0, 'flipud': 0.0,
             'cutmix': 0.0, 'auto_augment': False, 'optimizer': 'AdamW',
-            'epochs': 300, 'imgsz': 1280, 'batch': 6, 'patience': 50
+            'epochs': epochs_param_finding, 'imgsz': 1280, 'batch': 6, 'patience': 50
         },
-        'all_metrics': results.results_dict  # includes mAP50, mAP50-95, precision, recall
+        'all_metrics': results.results_dict
     }
 
-    with open(os.path.join(runs_dir, run_folder, 'trial_info.json'), 'w') as f:
-        json.dump(run_info, f, indent=trails)
+    with open(os.path.join(run_folder, 'trial_info.json'), 'w') as f:
+        json.dump(run_info, f, indent=2)  
 
     all_trials_data.append(run_info)
 
@@ -144,11 +133,11 @@ with open(SUMMARY_FILE, 'w') as f:
 
 # ── Final training using the best hyperparameters found ───────────────────────
 best = study.best_params
-model = yolo_model
+model =  YOLO('yolov8x.pt')
 model.train(
     data='data.yaml',
     epochs=1000,
-    patience=100,
+    patience=300,
     batch=6,
     imgsz=1280,
     **best,
