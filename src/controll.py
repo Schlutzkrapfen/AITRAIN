@@ -1,7 +1,9 @@
 import sys
+import hashlib
 from pathlib import Path
 import os
 from helper_functions import get_images_names, get_text_files_names, get_label_path, move_to_trash_folder
+from collections import defaultdict
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 script_directory = Path(sys.argv[0]).resolve().parent
 
@@ -65,11 +67,11 @@ def chec_val_and_train_dublicates(images_path,val_path):
     print(f"Direct overlap: {len(overlap)}")
     pass
 
-def _prompt_action(count: int, item_type: str) -> str:
+def _prompt_action(count: int, item_type: str, reason_type: str = "orphaned") -> str:
     """Ask user how to handle orphaned files. Returns 'r'(remove), 'y'(continue), or exits."""
     while True:
         choice = input(
-            f"{count} orphaned {item_type}(s) found. Remove (r), stop (n), or continue (y)? "
+            f"{count} {reason_type} {item_type}(s) found. Remove (r), stop (n), or continue (y)? "
         ).strip().lower()
         if choice in ("r", "y"):
             return choice
@@ -77,7 +79,7 @@ def _prompt_action(count: int, item_type: str) -> str:
             sys.exit(0)
         print("Invalid input, please enter r, n or y")
 
-def check_if_images_labels_exits(images_path,text_path):
+def check_if_images_labels_exits(images_path,text_path)->bool:
     '''checks if any labels or images exist'''
     if not images_path:
         print("No images in folder")
@@ -89,7 +91,46 @@ def check_if_images_labels_exits(images_path,text_path):
         return False
     return True
 
-def check_files_exist(input_dir, text_dir, trash_folder):
+def check_if_duplicates_exist(images_path)-> bool:
+    '''goes true the image folder and returns stops and aks what it should with duplicated images'''
+    hash_map = defaultdict(list)
+
+    # 1. Hash every file — O(n)
+    for filename in os.listdir(images_path):
+        filepath = os.path.join(images_path, filename)
+        if not os.path.isfile(filepath):
+            continue
+
+        file_hash = hash_file(filepath)
+        hash_map[file_hash].append(filepath)
+
+    # 2. Filter to only groups with more than one file
+    duplicate_groups = [paths for paths in hash_map.values() if len(paths) > 1]
+
+    if not duplicate_groups:
+        print("No duplicates found.")
+        return False
+    else :
+        print(duplicate_groups)
+        choice = _prompt_action(len(duplicate_groups),item_type="image",reason_type="dubplicate")
+        if choice == "r":
+             for group in duplicate_groups:
+                # Keep the first, delete the rest
+                for path in group[1:]:
+                    os.remove(path)
+                    print(f"  Deleted: {path}")
+                print(f"Removed {sum(len(g) - 1 for g in duplicate_groups)} duplicate(s).")
+
+
+
+def hash_file(filepath, chunk_size=8192):
+    """Returns an MD5 hash of the file's contents."""
+    hasher = hashlib.md5()
+    with open(filepath, "rb") as f:
+        while chunk := f.read(chunk_size):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+def check_files_exist(input_dir, text_dir, trash_folder)->bool:
     """Validate image/label pairs and prompt user to resolve mismatches before training."""
     images_path = get_images_names(input_dir)
     text_path = get_text_files_names(text_dir)
@@ -126,6 +167,7 @@ def check_files_exist(input_dir, text_dir, trash_folder):
     
     images_path = get_images_names(input_dir)
     text_path = get_text_files_names(text_dir)
+    check_if_duplicates_exist(images_path=input_dir)
     if not check_if_images_labels_exits(images_path,text_path):
         return False
     else:
