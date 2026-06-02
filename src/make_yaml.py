@@ -6,9 +6,8 @@ def get_classes(classes_dir):
     except:
         return classes_dir
 
-def make_yaml(classes_dir,path_to_yaml="data.yaml",path_to_pictures = "images/"):
+def make_yaml(classes_dir,path_to_yaml="data.yaml",path_to_pictures = "images"):
     """Generate data.yaml config file for YOLO training."""
-    
     classes = get_classes(classes_dir)
     if classes == None:
         ValueError
