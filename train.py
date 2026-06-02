@@ -3,26 +3,13 @@ import json
 import os
 import csv
 from datetime import datetime
-import yaml
 from ultralytics import YOLO
 YOLO_MODEL_FINAL = 'yolov8x.pt'
 EPOCHS_FINAL = 1000
 yaml_path= "data.yaml"
 
-def make_file_structer():
-    os.makedirs("./single_label_runs", exist_ok=True) 
-    with open(yaml_path) as stream:
-        try:
-            for items in yaml.safe_load(stream)["names"].values():
-                print(items)
-                os.makedirs(f"single_label_runs/{items}/Train/",exist_ok=True)
 
-        except yaml.YAMLError as exc:
-            print(exc)
-def init():
-    make_file_structer()
 def train_on_single_label():
-    os.mkdir()
     pass
 def train_with_imporfment():
     YOLO_MODEL = 'yolov8x.pt'
@@ -68,7 +55,8 @@ def train_with_imporfment():
         )
 
         results = model.train(
-            data='data.yaml',
+            
+            data=yaml_path,
             epochs=EPOCHS_SEARCH,
             imgsz=1280,
             batch=6,
@@ -82,6 +70,7 @@ def train_with_imporfment():
             auto_augment=False,
             optimizer='AdamW',
             **params,
+        
         )
 
         mAP50 = results.results_dict['metrics/mAP50(B)']
@@ -176,7 +165,7 @@ def train(best):
    # Fresh instance required here too — same reason as inside objective()
     model = YOLO(YOLO_MODEL_FINAL)
     model.train(
-        data='data.yaml',
+        data=yaml_path,
         epochs=EPOCHS_FINAL,
         patience=100,
         batch=6,
@@ -190,4 +179,3 @@ def train(best):
         auto_augment=False,
         optimizer='AdamW',
     )
-init()

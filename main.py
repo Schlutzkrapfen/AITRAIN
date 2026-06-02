@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from controll import check_files_exist
 from split import  split
 from make_yaml  import make_yaml
+from single_label_train import make_yamls
 from summery import make_summery
 
 
@@ -24,9 +25,10 @@ What do you want to do?
   2 - Split up the Input Files
   3 - Train
   4 - Get a Summary
+  5 - Quit
 """
 
-VALID_CHOICES = {"0", "1", "2", "3", "4", ""}
+VALID_CHOICES = {"0", "1", "2", "3", "4", "5",""}
 def main():
     while True:
         while True:
@@ -58,8 +60,11 @@ def main():
                     make_yaml(classes_dir)
             case "3":
                 print("Training is currently unavailable.")
+                make_yamls()
             case "4":
                 make_summery()
+            case "5":
+                break
         print("finished")
         answer = input("Do you want to do something else. N no, y yes: ").strip().lower()
         if answer != "y":
