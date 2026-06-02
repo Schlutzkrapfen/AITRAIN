@@ -1,6 +1,6 @@
 import os
 import sys
-import yaml
+from collections import defaultdict
 import shutil
 from pathlib import Path
 from helper_functions import move_to_trash_folder,get_images_path, get_label_path,get_images_from_ordered,get_label_from_ordered,get_classnames
@@ -82,9 +82,44 @@ def copy_everything_for_single_traning(path_to_pictures, path_to_labels,split_pr
     labels = get_label_from_ordered(path_to_labels)
 
     print(f"{len(images)} images found {len(labels)} labels found")
-    get_classnames(labels,yaml_path)
-   
-
+    classnames = get_classnames(labels,yaml_path)
+     
+    classname_to_images = defaultdict(list)
+    classname_to_labels = defaultdict(list)
     
+
+    for i, names in enumerate(classnames):
+        current_image_path = images[i]
+        current_label_path = labels[i]
+        
+        for single_name in set(names):
+            classname_to_images[single_name].append(current_image_path)
+            classname_to_labels[single_name].append(current_label_path)
+
+    if split_prozent == None:
+        split_prozent = _get_split_ratio()
+
+    for split_type, current_images in classname_to_images.items():
+        split_index = int(len(current_images) * split_prozent)
+        train_images = current_images[:split_index]
+        val_images   = current_images[ split_index:]
+        print(f"found {len(current_images)} images that are connected to {split_type}")
+        for image in train_images:
+            shutil.copy2(image,f"single_label_runs/{split_type}/images/train")
+        for image in val_images:
+            shutil.copy2(image,f"single_label_runs/{split_type}/images/val")
+    for split_type, current_label in classname_to_labels.items():
+        split_index = int(len(current_label) * split_prozent)
+        print(f"found {len(current_label)} labels that are connected to {split_type}")
+        train_images = current_label[:split_index]
+        val_images   = current_label[ split_index:]
+        for image in train_images:
+            shutil.copy2(image,f"single_label_runs/{split_type}/label/train")
+        for image in val_images:
+            shutil.copy2(image,f"single_label_runs/{split_type}/label/val")
+
+
+
+
 
 

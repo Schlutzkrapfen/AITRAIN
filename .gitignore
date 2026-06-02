@@ -439,6 +439,7 @@ InputFolder/*
 images/*
 labels/*
 Trash/*
+single_label_runs/*
 classes.txt
 notes.json
 trials_log.csv

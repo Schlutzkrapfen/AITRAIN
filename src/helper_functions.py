@@ -85,7 +85,6 @@ def get_classnames(labels,yaml_path)-> list[str]:
     with open(yaml_path, "r") as file:
         dataset_info = yaml.safe_load(file)
 
-    print(unique_ids)
     class_mapping = dataset_info.get("names", {})
     class_names = []
     for ids in unique_ids:
