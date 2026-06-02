@@ -1,8 +1,9 @@
 import os
 import sys
+import yaml
 import shutil
 from pathlib import Path
-from helper_functions import move_to_trash_folder,get_images_path, get_label_path
+from helper_functions import move_to_trash_folder,get_images_path, get_label_path,get_images_from_ordered,get_label_from_ordered,get_classnames
 
 script_directory = Path(os.path.dirname(os.path.abspath(sys.argv[0])))
 
@@ -66,3 +67,24 @@ def split(input_dir, text_dir, trash_folder):
         move_to_trash_folder(images,trash_folder,"Picutre")
         move_to_trash_folder(labels,trash_folder,"label")
       
+def copy_everything_for_single_traning(path_to_pictures, path_to_labels,split_prozent=None,yaml_path="data.yaml"):
+    """
+    Prepares and copies images and labels for single-label training.
+    
+    Flattens and re-splits the incoming data, ignoring any pre-existing 
+    'train' or 'val' directory structures to accommodate potential updates.
+
+    Args:
+        path_to_pictures (str): Source path containing the images.
+        path_to_labels (str): Source path containing the corresponding labels.
+    """
+    images = get_images_from_ordered(path_to_pictures)
+    labels = get_label_from_ordered(path_to_labels)
+
+    print(f"{len(images)} images found {len(labels)} labels found")
+    get_classnames(labels,yaml_path)
+   
+
+    
+
+
