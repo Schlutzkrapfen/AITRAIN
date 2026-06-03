@@ -2,22 +2,25 @@ import os
 import yaml
 import shutil
 from pathlib import Path
+import re
 from make_yaml import make_yaml
 from split import copy_everything_for_single_traning
 from train import train
 YOLO_MODEL_FINAL = 'yolov8x.pt'
+
+def sanitize_folder_name(name):
+    # Replace / and other invalid path characters with an underscore
+    return re.sub(r'[<>:"/\\|?*]', '_', name)
 def make_file_structer(yaml_path):
     os.makedirs("./single_label_runs", exist_ok=True) 
     folder_paths = []
     with open(yaml_path) as stream:
         try:
             for items in yaml.safe_load(stream)["names"].values():
-                target_path = f"single_label_runs/{items}"
-                os.makedirs(target_path,exist_ok=True)
-                os.makedirs(os.path.join(target_path,"images/train"),exist_ok=True )
-                os.makedirs(os.path.join(target_path,"images/val"),exist_ok=True )
-                os.makedirs(os.path.join(target_path,"label/train"),exist_ok=True )
-                os.makedirs(os.path.join(target_path,"label/val"),exist_ok=True )
+                target_path = os.path.join("single_label_runs",sanitize_folder_name(items))
+                for split in ["train", "val"]:
+                    os.makedirs(os.path.join(target_path, "images", split), exist_ok=True)
+                    os.makedirs(os.path.join(target_path, "label", split), exist_ok=True)
                 folder_paths.append(target_path)
         except yaml.YAMLError as exc:
             print(exc)
@@ -38,11 +41,11 @@ def make_yamls()-> list[Path]:
 def train_on_each_label():
 
     yaml_paths = make_yamls()
+    copy_everything_for_single_traning(Path("images"),Path("labels"))
     
     for path in yaml_paths:
         train(None,path)
     #disabled for testing reasiing
-    #copy_everything_for_single_traning(Path("images"),Path("labels"))
   
 
 
