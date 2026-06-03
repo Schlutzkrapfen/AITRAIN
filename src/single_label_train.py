@@ -41,7 +41,7 @@ def train_on_each_label():
     
     copy_everything_for_single_traning(Path("images"),Path("labels"))
     for path in yaml_paths:
-        train("default",path)
+        train(None,path)
   
 
 
