@@ -2,15 +2,12 @@ import os
 import yaml
 import shutil
 from pathlib import Path
-import re
 from make_yaml import make_yaml
 from split import copy_everything_for_single_traning
 from train import train
+from helper_functions import sanitize_folder_name
 YOLO_MODEL_FINAL = 'yolov8x.pt'
 
-def sanitize_folder_name(name):
-    # Replace / and other invalid path characters with an underscore
-    return re.sub(r'[<>:"/\\|?*]', '_', name)
 def make_file_structer(yaml_path):
     os.makedirs("./single_label_runs", exist_ok=True) 
     folder_paths = []

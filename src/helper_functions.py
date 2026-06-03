@@ -1,6 +1,7 @@
 
 from pathlib import Path
 import yaml
+import re
 import shutil
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 
@@ -101,3 +102,7 @@ def change_yaml_to_id_output(text:str,yaml_path:str="data.yaml")->int:
     name_to_id = {v: k for k, v in data["names"].items()}
     
     return name_to_id.get(text, -1)
+
+def sanitize_folder_name(name):
+    # Replace / and other invalid path characters with an underscore
+    return re.sub(r'[<>:"/\\|?*]', '_', name)

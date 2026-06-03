@@ -3,8 +3,7 @@ import sys
 from collections import defaultdict
 import shutil
 from pathlib import Path
-from helper_functions import move_to_trash_folder,get_images_path, get_label_path,get_images_from_ordered,get_label_from_ordered,get_classnames,change_yaml_to_id_output
-
+from helper_functions import move_to_trash_folder,get_images_path, get_label_path,get_images_from_ordered,get_label_from_ordered,get_classnames,change_yaml_to_id_output, sanitize_folder_name
 script_directory = Path(os.path.dirname(os.path.abspath(sys.argv[0])))
 
 FOLDER_STRUCTURE = [
@@ -100,6 +99,7 @@ def copy_everything_for_single_traning(path_to_pictures, path_to_labels,split_pr
         split_prozent = _get_split_ratio()
 
     for split_type, current_images in classname_to_images.items():
+        split_type = sanitize_folder_name(split_type)
         split_index = int(len(current_images) * split_prozent)
         train_images = current_images[:split_index]
         val_images   = current_images[ split_index:]
@@ -109,6 +109,7 @@ def copy_everything_for_single_traning(path_to_pictures, path_to_labels,split_pr
         for image in val_images:
             shutil.copy2(image,f"single_label_runs/{split_type}/images/val")
     for split_type, current_label in classname_to_labels.items():
+        split_type = sanitize_folder_name(split_type)
         split_index = int(len(current_label) * split_prozent)
         print(f"found {len(current_label)} labels that are connected to {split_type}")
         train_labels = current_label[:split_index]
