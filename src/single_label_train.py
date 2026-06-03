@@ -39,9 +39,10 @@ def train_on_each_label():
 
     yaml_paths = make_yamls()
     
-    copy_everything_for_single_traning(Path("images"),Path("labels"))
     for path in yaml_paths:
         train(None,path)
+    #disabled for testing reasiing
+    #copy_everything_for_single_traning(Path("images"),Path("labels"))
   
 
 
