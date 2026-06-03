@@ -3,7 +3,7 @@ import sys
 from collections import defaultdict
 import shutil
 from pathlib import Path
-from helper_functions import move_to_trash_folder,get_images_path, get_label_path,get_images_from_ordered,get_label_from_ordered,get_classnames
+from helper_functions import move_to_trash_folder,get_images_path, get_label_path,get_images_from_ordered,get_label_from_ordered,get_classnames,change_yaml_to_id_output
 
 script_directory = Path(os.path.dirname(os.path.abspath(sys.argv[0])))
 
@@ -111,12 +111,27 @@ def copy_everything_for_single_traning(path_to_pictures, path_to_labels,split_pr
     for split_type, current_label in classname_to_labels.items():
         split_index = int(len(current_label) * split_prozent)
         print(f"found {len(current_label)} labels that are connected to {split_type}")
-        train_images = current_label[:split_index]
-        val_images   = current_label[ split_index:]
-        for image in train_images:
-            shutil.copy2(image,f"single_label_runs/{split_type}/label/train")
-        for image in val_images:
-            shutil.copy2(image,f"single_label_runs/{split_type}/label/val")
+        train_labels = current_label[:split_index]
+        val_labels   = current_label[ split_index:]
+        for label in train_labels:
+            new_label = shutil.copy2(label,f"single_label_runs/{split_type}/label/train")
+            with open(new_label,"r") as f:
+                lines =f.readlines()
+                filtered_lines = []
+            for line in lines:
+                parts = line.split()
+                if not parts:          
+                    continue
+                id = change_yaml_to_id_output(split_type)
+                if int(parts[0]) == id:
+                    parts[0] = "0"
+                    filtered_lines.append(" ".join(parts) + "\n")
+            with open(new_label, "w") as f:
+                f.writelines(filtered_lines)
+
+
+        for image in val_labels:
+            shutil.copy2(label,f"single_label_runs/{split_type}/label/val")
 
 
 

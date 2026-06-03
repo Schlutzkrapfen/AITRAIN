@@ -90,3 +90,14 @@ def get_classnames(labels,yaml_path)-> list[str]:
     for ids in unique_ids:
         class_names.append( [class_mapping.get(id, f"Unknown-{id}") for id in ids])
     return class_names
+
+
+def change_yaml_to_id_output(text:str,yaml_path:str="data.yaml")->int:
+    '''Changes the gets the string and converts it to a '''
+    with open(yaml_path,"r") as f:
+        data = yaml.safe_load(f)
+    
+    # Flip {0: 'Caries', 1: 'Calculus'} → {'Caries': 0, 'Calculus': 1}
+    name_to_id = {v: k for k, v in data["names"].items()}
+    
+    return name_to_id.get(text, -1)

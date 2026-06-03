@@ -27,6 +27,8 @@ def make_yamls():
         make_yaml(single_label,folder_path)
 
 
+def train_on_each_label():
+    pass
 
 
 
