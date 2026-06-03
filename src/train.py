@@ -199,4 +199,5 @@ def train(best=None,yaml_path= "data.yaml"):
         cutmix=0.0,
         auto_augment=False,
         optimizer='AdamW',
+        
     )
