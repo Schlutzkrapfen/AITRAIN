@@ -6,10 +6,11 @@ from pathlib import Path
 USER_DATA_DIR = 'user_data' 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from controll import check_files_exist
-from split import  split, copy_everything_for_single_traning
+from split import  split 
 from make_yaml  import make_yaml
-from single_label_train import make_yamls
+from single_label_train import train_on_each_label
 from summery import make_summery
+
 
 
 base_dir = Path("./InputFolder")
@@ -60,9 +61,7 @@ def main():
                     make_yaml(classes_dir)
             case "3":
                 print("Training is currently unavailable.")
-                make_yamls()
-                copy_everything_for_single_traning(Path("images"),Path("labels"))
-                
+                train_on_each_label()
             case "4":
                 make_summery()
             case "5":

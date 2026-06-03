@@ -9,6 +9,25 @@ EPOCHS_FINAL = 1000
 yaml_path= "data.yaml"
 
 
+DEFAULT_BEST = {
+    "lr0": 0.001,
+    "lrf": 0.01,
+    "momentum": 0.937,
+    "weight_decay": 0.0005,
+    "warmup_epochs": 3.0,
+    "warmup_momentum": 0.8,
+    "box": 7.5,
+    "cls": 0.5,
+    "dfl": 1.5,
+    "degrees": 0.0,
+    "translate": 0.1,
+    "scale": 0.5,
+    "shear": 0.0,
+    "perspective": 0.0,
+    "fliplr": 0.5,
+    "mosaic": 1.0,
+    "mixup": 0.0,
+}
 def train_on_single_label():
     pass
 def train_with_imporfment():
@@ -161,7 +180,9 @@ def train_with_imporfment():
     print(f"📊 Trial log saved to: {LOG_FILE}")
     print(f"📋 Full summary saved to: {SUMMARY_FILE}")
 
-def train(best):
+def train(best=None,yaml_path= "data.yaml"):
+    if best is None:
+        best = DEFAULT_BEST.copy() 
    # Fresh instance required here too — same reason as inside objective()
     model = YOLO(YOLO_MODEL_FINAL)
     model.train(

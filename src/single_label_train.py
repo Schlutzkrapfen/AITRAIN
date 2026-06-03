@@ -1,7 +1,11 @@
 import os
 import yaml
 import shutil
+from pathlib import Path
 from make_yaml import make_yaml
+from split import copy_everything_for_single_traning
+from train import train
+YOLO_MODEL_FINAL = 'yolov8x.pt'
 def make_file_structer(yaml_path):
     os.makedirs("./single_label_runs", exist_ok=True) 
     folder_paths = []
@@ -19,16 +23,26 @@ def make_file_structer(yaml_path):
             print(exc)
     return folder_paths
 
-def make_yamls():
+def make_yamls()-> list[Path]:
     folder_paths = make_file_structer("data.yaml")
+    paths = []
     for folder in folder_paths:
         single_label = [os.path.basename(folder)]
         folder_path = os.path.join(folder,"data.yaml")
         make_yaml(single_label,folder_path)
+        paths.append(folder_path)
+    return paths
+    
 
 
 def train_on_each_label():
-    pass
+
+    yaml_paths = make_yamls()
+    
+    copy_everything_for_single_traning(Path("images"),Path("labels"))
+    for path in yaml_paths:
+        train("default",path)
+  
 
 
 
