@@ -117,16 +117,11 @@ def copy_everything_for_single_traning(
     if split_prozent == None:
         split_prozent = _get_split_ratio()
 
-    for split_type, current_images in classname_to_images.items():
-        split_type = sanitize_folder_name(split_type)
-        split_index = int(len(current_images) * split_prozent)
-        train_images = current_images[:split_index]
-        val_images = current_images[split_index:]
-        print(f"found {len(current_images)} images that are connected to {split_type}")
-        for image in train_images:
-            shutil.copy2(image, f"single_label_runs/{split_type}/images/train")
-        for image in val_images:
-            shutil.copy2(image, f"single_label_runs/{split_type}/images/val")
+    save_pictures_single_folder(classname_to_images, split_prozent)
+    save_label_single_folder(classname_to_labels, split_prozent)
+
+
+def save_label_single_folder(classname_to_labels, split_prozent):
     for split_type, current_label in classname_to_labels.items():
         split_type = sanitize_folder_name(split_type)
         split_index = int(len(current_label) * split_prozent)
@@ -142,6 +137,19 @@ def copy_everything_for_single_traning(
         for label in val_labels:
             new_label = shutil.copy2(label, f"single_label_runs/{split_type}/label/val")
             formatt_lines(new_label=new_label, split_type=split_type)
+
+
+def save_pictures_single_folder(classname_to_images, split_prozent):
+    for split_type, current_images in classname_to_images.items():
+        split_type = sanitize_folder_name(split_type)
+        split_index = int(len(current_images) * split_prozent)
+        train_images = current_images[:split_index]
+        val_images = current_images[split_index:]
+        print(f"found {len(current_images)} images that are connected to {split_type}")
+        for image in train_images:
+            shutil.copy2(image, f"single_label_runs/{split_type}/images/train")
+        for image in val_images:
+            shutil.copy2(image, f"single_label_runs/{split_type}/images/val")
 
 
 def formatt_lines(new_label, split_type):
