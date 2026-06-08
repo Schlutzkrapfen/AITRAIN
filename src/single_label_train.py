@@ -3,7 +3,7 @@ from pathlib import Path
 
 import yaml
 
-from controll import check_if_images_labels_exits
+from controll import check_files_exist
 from helper_functions import sanitize_folder_name
 from make_yaml import make_yaml
 from split import copy_everything_for_single_traning
@@ -49,9 +49,11 @@ def train_on_each_label():
     copy_everything_for_single_traning(Path("images"), Path("labels"))
 
     for path in yaml_paths:
-        label_path = os.path.join(path, "labels")
-        image_path = os.path.join(path, "images")
-        if not check_if_images_labels_exits(image_path, label_path):
+        base_path = os.path.dirname(path)
+        label_path = os.path.join(base_path, "labels/val")
+        image_path = os.path.join(base_path, "images/val")
+        print(image_path)
+        if not check_files_exist(Path(image_path), Path(label_path)):
             continue
         train(None, path)
     # disabled for testing reasiing

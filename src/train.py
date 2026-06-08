@@ -7,7 +7,7 @@ import optuna
 from ultralytics import YOLO
 
 YOLO_MODEL_FINAL = "yolov8x.pt"
-EPOCHS_FINAL = 10
+EPOCHS_FINAL = 1000
 yaml_path = "data.yaml"
 
 
@@ -218,7 +218,7 @@ def train(best=None, yaml_path="data.yaml"):
     model.train(
         data=yaml_path,
         epochs=EPOCHS_FINAL,
-        patience=10,
+        patience=100,
         batch=6,
         imgsz=1280,
         **best,
