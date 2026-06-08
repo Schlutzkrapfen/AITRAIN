@@ -153,7 +153,10 @@ def hash_file(filepath, chunk_size=8192):
 
 
 def check_files_exist(
-    input_dir, text_dir, trash_folder=Path("Trash"), ask_what_do: bool = True
+    input_dir,
+    text_dir,
+    trash_folder=Path("Trash"),
+    should_be_automaticly_delteted: bool = False,
 ) -> bool:
     """Validate image/label pairs and prompt user to resolve mismatches before training."""
     images_path = get_images_names(input_dir)
@@ -166,23 +169,29 @@ def check_files_exist(
     # Check images missing labels
     single_images = images_have_labels(images_path, text_path, input_dir)
     if single_images:
-        if ask_what_do:
+        if not should_be_automaticly_delteted:
             if _prompt_action(len(single_images), "image") == "r":
                 move_to_trash_folder(single_images, trash_folder, "image")
                 images_path = [f for f in images_path if f not in single_images]
+        else:
+            move_to_trash_folder(single_images, trash_folder, "image")
+            images_path = [f for f in images_path if f not in single_images]
 
     # Check labels missing images
     single_labels = labels_have_images(images_path, text_path, text_dir)
     if single_labels:
-        if ask_what_do:
+        if not should_be_automaticly_delteted:
             if _prompt_action(len(single_labels), "label") == "r":
                 move_to_trash_folder(single_labels, trash_folder, "label")
                 text_path = [f for f in text_path if f not in single_labels]
+        else:
+            move_to_trash_folder(single_labels, trash_folder, "label")
+            text_path = [f for f in text_path if f not in single_labels]
 
     # Check empty label files
     empty_labels = check_if_labels_empty(get_label_path(text_dir))
     if empty_labels:
-        if ask_what_do:
+        if should_be_automaticly_delteted:
             if _prompt_action(len(empty_labels), "empty label") == "r":
                 for label in empty_labels:
                     stem = Path(label).stem
@@ -193,6 +202,16 @@ def check_files_exist(
                                 move_to_trash_folder(img, trash_folder, "image")
                 move_to_trash_folder(empty_labels, trash_folder, "label")
                 text_path = [f for f in text_path if f not in empty_labels]
+        else:
+            for label in empty_labels:
+                stem = Path(label).stem
+                for split in ["train", "val"]:
+                    for ext in [".jpg", ".jpeg", ".png"]:
+                        img = input_dir / split / (stem + ext)
+                        if img.exists():
+                            move_to_trash_folder(img, trash_folder, "image")
+            move_to_trash_folder(empty_labels, trash_folder, "label")
+            text_path = [f for f in text_path if f not in empty_labels]
 
     images_path = get_images_names(input_dir)
     text_path = get_text_files_names(text_dir)

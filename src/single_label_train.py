@@ -54,7 +54,9 @@ def train_on_each_label():
         label_path = os.path.join(base_path, "labels/train")
         image_path = os.path.join(base_path, "images/train")
         print(image_path)
-        if not check_files_exist(Path(image_path), Path(label_path), ask_what_do=False):
+        if not check_files_exist(
+            Path(image_path), Path(label_path), should_be_automaticly_delteted=True
+        ):
             continue
         train(None, path)
     # disabled for testing reasiing
