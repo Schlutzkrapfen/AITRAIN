@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import yaml
+from sympy.logic.boolalg import false
 
 from controll import check_files_exist
 from helper_functions import sanitize_folder_name
@@ -50,10 +51,10 @@ def train_on_each_label():
 
     for path in yaml_paths:
         base_path = os.path.dirname(path)
-        label_path = os.path.join(base_path, "labels/val")
-        image_path = os.path.join(base_path, "images/val")
+        label_path = os.path.join(base_path, "labels/train")
+        image_path = os.path.join(base_path, "images/train")
         print(image_path)
-        if not check_files_exist(Path(image_path), Path(label_path)):
+        if not check_files_exist(Path(image_path), Path(label_path), ask_what_do=False):
             continue
         train(None, path)
     # disabled for testing reasiing
