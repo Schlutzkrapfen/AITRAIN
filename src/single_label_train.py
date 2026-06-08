@@ -8,8 +8,6 @@ from make_yaml import make_yaml
 from split import copy_everything_for_single_traning
 from train import train
 
-YOLO_MODEL_FINAL = "yolov8x.pt"
-
 
 def make_file_structer(yaml_path):
     os.makedirs("./single_label_runs", exist_ok=True)
