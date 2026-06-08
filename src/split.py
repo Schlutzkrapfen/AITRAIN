@@ -130,13 +130,13 @@ def save_label_single_folder(classname_to_labels, split_prozent):
         val_labels = current_label[split_index:]
         for label in train_labels:
             new_label = shutil.copy2(
-                label, f"single_label_runs/{sanitized_name}/label/train"
+                label, f"single_label_runs/{sanitized_name}/labels/train"
             )
             formatt_lines(new_label=new_label, split_type=split_type)
 
         for label in val_labels:
             new_label = shutil.copy2(
-                label, f"single_label_runs/{sanitized_name}/label/val"
+                label, f"single_label_runs/{sanitized_name}/labels/val"
             )
             formatt_lines(new_label=new_label, split_type=split_type)
 

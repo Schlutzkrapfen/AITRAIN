@@ -23,7 +23,7 @@ def make_file_structer(yaml_path):
                         os.path.join(target_path, "images", split), exist_ok=True
                     )
                     os.makedirs(
-                        os.path.join(target_path, "label", split), exist_ok=True
+                        os.path.join(target_path, "labels", split), exist_ok=True
                     )
                 folder_paths.append(target_path)
         except yaml.YAMLError as exc:
