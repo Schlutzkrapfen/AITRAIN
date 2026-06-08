@@ -152,7 +152,7 @@ def hash_file(filepath, chunk_size=8192):
     return hasher.hexdigest()
 
 
-def check_files_exist(input_dir, text_dir, trash_folder="Trash") -> bool:
+def check_files_exist(input_dir, text_dir, trash_folder=Path("Trash")) -> bool:
     """Validate image/label pairs and prompt user to resolve mismatches before training."""
     images_path = get_images_names(input_dir)
     print(images_path)
