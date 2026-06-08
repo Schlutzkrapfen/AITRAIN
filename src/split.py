@@ -123,33 +123,37 @@ def copy_everything_for_single_traning(
 
 def save_label_single_folder(classname_to_labels, split_prozent):
     for split_type, current_label in classname_to_labels.items():
-        split_type = sanitize_folder_name(split_type)
+        sanitized_name = sanitize_folder_name(split_type)
         split_index = int(len(current_label) * split_prozent)
         print(f"found {len(current_label)} labels that are connected to {split_type}")
         train_labels = current_label[:split_index]
         val_labels = current_label[split_index:]
         for label in train_labels:
             new_label = shutil.copy2(
-                label, f"single_label_runs/{split_type}/label/train"
+                label, f"single_label_runs/{sanitized_name}/label/train"
             )
             formatt_lines(new_label=new_label, split_type=split_type)
 
         for label in val_labels:
-            new_label = shutil.copy2(label, f"single_label_runs/{split_type}/label/val")
+            new_label = shutil.copy2(
+                label, f"single_label_runs/{sanitized_name}/label/val"
+            )
             formatt_lines(new_label=new_label, split_type=split_type)
 
 
 def save_pictures_single_folder(classname_to_images, split_prozent):
     for split_type, current_images in classname_to_images.items():
-        split_type = sanitize_folder_name(split_type)
+        sanitize_name = sanitize_folder_name(split_type)
         split_index = int(len(current_images) * split_prozent)
         train_images = current_images[:split_index]
         val_images = current_images[split_index:]
-        print(f"found {len(current_images)} images that are connected to {split_type}")
+        print(
+            f"found {len(current_images)} images that are connected to {sanitize_name}"
+        )
         for image in train_images:
-            shutil.copy2(image, f"single_label_runs/{split_type}/images/train")
+            shutil.copy2(image, f"single_label_runs/{sanitize_name}/images/train")
         for image in val_images:
-            shutil.copy2(image, f"single_label_runs/{split_type}/images/val")
+            shutil.copy2(image, f"single_label_runs/{sanitize_name}/images/val")
 
 
 def formatt_lines(new_label, split_type):
