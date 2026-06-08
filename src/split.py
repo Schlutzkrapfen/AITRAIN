@@ -156,17 +156,22 @@ def save_pictures_single_folder(classname_to_images, split_prozent):
             shutil.copy2(image, f"single_label_runs/{sanitize_name}/images/val")
 
 
-def formatt_lines(new_label, split_type):
+def formatt_lines(new_label: str, split_type: str) -> None:
+    target_id = str(
+        change_yaml_to_id_output(split_type)
+    )  # ✅ Called once, YAML read once ever
+
     with open(new_label, "r") as f:
         lines = f.readlines()
+
     filtered_lines = []
     for line in lines:
         parts = line.split()
         if not parts:
             continue
-        id = change_yaml_to_id_output(split_type)
-        if int(parts[0]) == id:
+        if parts[0] == target_id:  # ✅ String compare, no int() cast
             parts[0] = "0"
             filtered_lines.append(" ".join(parts) + "\n")
+
     with open(new_label, "w") as f:
         f.writelines(filtered_lines)
