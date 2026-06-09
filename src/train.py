@@ -7,7 +7,7 @@ import optuna
 from ultralytics import YOLO
 
 YOLO_MODEL_FINAL = "yolov8x.pt"
-EPOCHS_FINAL = 10
+EPOCHS_FINAL = 200
 yaml_path = "data.yaml"
 
 

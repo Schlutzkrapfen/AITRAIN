@@ -52,10 +52,16 @@ def train_on_each_label():
     for path in yaml_paths:
         base_path = os.path.dirname(path)
         label_path = os.path.join(base_path, "labels/train")
+        label_val_path = os.path.join(base_path, "labels/val")
         image_path = os.path.join(base_path, "images/train")
+        image_val_path = os.path.join(base_path, "labels/val")
         print(image_path)
         if not check_files_exist(
             Path(image_path), Path(label_path), should_be_automaticly_delteted=True
+        ) and not check_files_exist(
+            Path(image_val_path),
+            Path(label_val_path),
+            should_be_automaticly_delteted=True,
         ):
             continue
         train(None, path)
