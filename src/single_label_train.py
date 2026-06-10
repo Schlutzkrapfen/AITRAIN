@@ -64,5 +64,9 @@ def train_on_each_label():
             should_be_automaticly_delteted=True,
         ):
             continue
-        train(None, path)
+        try:
+            train(None, path)
+        except Exception as e:
+            print(f"this broke bacause: {e}")
+            continue
     # disabled for testing reasiing
