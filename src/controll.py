@@ -108,7 +108,7 @@ def check_if_images_labels_exits(images_path, text_path) -> bool:
     return True
 
 
-def check_if_duplicates_exist(images_path) -> bool:
+def check_if_duplicates_exist(images_path: str, delete_automatic: bool = False) -> bool:
     """goes true the image folder and returns stops and aks what it should with duplicated images"""
     hash_map = defaultdict(list)
 
@@ -129,9 +129,12 @@ def check_if_duplicates_exist(images_path) -> bool:
         return False
     else:
         print(duplicate_groups)
-        choice = _prompt_action(
-            len(duplicate_groups), item_type="image", reason_type="dubplicate"
-        )
+        if delete_automatic:
+            choice = _prompt_action(
+                len(duplicate_groups), item_type="image", reason_type="dubplicate"
+            )
+        else:
+            choice = "r"
         if choice == "r":
             for group in duplicate_groups:
                 # Keep the first, delete the rest
@@ -141,6 +144,8 @@ def check_if_duplicates_exist(images_path) -> bool:
                 print(
                     f"Removed {sum(len(g) - 1 for g in duplicate_groups)} duplicate(s)."
                 )
+
+        return True
 
 
 def hash_file(filepath, chunk_size=8192):
@@ -156,7 +161,7 @@ def check_files_exist(
     input_dir,
     text_dir,
     trash_folder=Path("Trash"),
-    should_be_automaticly_delteted: bool = False,
+    deleted_automaticly: bool = False,
 ) -> bool:
     """Validate image/label pairs and prompt user to resolve mismatches before training."""
     images_path = get_images_names(input_dir)
@@ -169,7 +174,7 @@ def check_files_exist(
     # Check images missing labels
     single_images = images_have_labels(images_path, text_path, input_dir)
     if single_images:
-        if not should_be_automaticly_delteted:
+        if not deleted_automaticly:
             if _prompt_action(len(single_images), "image") == "r":
                 move_to_trash_folder(single_images, trash_folder, "image")
                 images_path = [f for f in images_path if f not in single_images]
@@ -180,7 +185,7 @@ def check_files_exist(
     # Check labels missing images
     single_labels = labels_have_images(images_path, text_path, text_dir)
     if single_labels:
-        if not should_be_automaticly_delteted:
+        if not deleted_automaticly:
             if _prompt_action(len(single_labels), "label") == "r":
                 move_to_trash_folder(single_labels, trash_folder, "label")
                 text_path = [f for f in text_path if f not in single_labels]
@@ -191,7 +196,7 @@ def check_files_exist(
     # Check empty label files
     empty_labels = check_if_labels_empty(get_label_path(text_dir))
     if empty_labels:
-        if should_be_automaticly_delteted:
+        if deleted_automaticly:
             if _prompt_action(len(empty_labels), "empty label") == "r":
                 for label in empty_labels:
                     stem = Path(label).stem
@@ -215,7 +220,9 @@ def check_files_exist(
 
     images_path = get_images_names(input_dir)
     text_path = get_text_files_names(text_dir)
-    check_if_duplicates_exist(images_path=input_dir)
+    check_if_duplicates_exist(
+        images_path=input_dir, delete_automatic=deleted_automaticly
+    )
     if not check_if_images_labels_exits(images_path, text_path):
         return False
     else:

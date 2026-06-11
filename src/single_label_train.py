@@ -57,11 +57,11 @@ def train_on_each_label():
         image_val_path = os.path.join(base_path, "labels/val")
         print(image_path)
         if not check_files_exist(
-            Path(image_path), Path(label_path), should_be_automaticly_delteted=True
+            Path(image_path), Path(label_path), deleted_automaticly=True
         ) and not check_files_exist(
             Path(image_val_path),
             Path(label_val_path),
-            should_be_automaticly_delteted=True,
+            deleted_automaticly=True,
         ):
             continue
         try:
