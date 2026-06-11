@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 
 import yaml
-from sympy.logic.boolalg import false
 
 from controll import check_files_exist
 from helper_functions import sanitize_folder_name
@@ -65,8 +64,7 @@ def train_on_each_label():
         ):
             continue
         try:
-            train(None, path)
+            train(None, str(path))
         except Exception as e:
             print(f"this broke bacause: {e}")
             continue
-    # disabled for testing reasiing

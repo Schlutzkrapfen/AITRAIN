@@ -7,17 +7,17 @@ import yaml
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 
 
-def get_images_path(directory: Path) -> list[Path]:
+def get_images_path(directory: Path) -> set[Path]:
     """Gets all the paths of images out of a folder with endings png, jpg and jpeg"""
     return {f for f in directory.iterdir() if f.suffix.lower() in IMAGE_EXTENSIONS}
 
 
-def get_label_path(directory: Path) -> list[Path]:
+def get_label_path(directory: Path) -> set[Path]:
     """gets all the paths of labels in a folder"""
     return {f for f in directory.iterdir() if f.suffix.lower() == ".txt"}
 
 
-def get_images_names(directory: Path) -> list[str]:
+def get_images_names(directory: Path) -> set[str]:
     """Gets all the names of images out of a folder endings png, jpg and jpeg"""
     return {
         f.name[: -len(f.suffix)]

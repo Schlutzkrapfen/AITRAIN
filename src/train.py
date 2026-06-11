@@ -32,10 +32,6 @@ DEFAULT_BEST = {
 }
 
 
-def train_on_single_label():
-    pass
-
-
 def train_with_imporfment():
     YOLO_MODEL = "yolov8x.pt"
     TRIALS = 300
@@ -109,6 +105,8 @@ def train_with_imporfment():
             optimizer="AdamW",
             **params,
         )
+        if results is None:
+            raise ValueError("Something went wrong with Training")
 
         mAP50 = results.results_dict["metrics/mAP50(B)"]
         duration = (datetime.now() - start_time).total_seconds() / 60
@@ -222,7 +220,6 @@ def train(best=None, yaml_path="data.yaml"):
         batch=6,
         imgsz=1280,
         **best,
-        # Fixed params — not part of the search
         hsv_h=0.0,
         hsv_s=0.0,
         flipud=0.0,

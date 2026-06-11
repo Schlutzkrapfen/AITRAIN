@@ -32,7 +32,7 @@ def images_have_labels(image_files, label_files, input_dir):
                     found = Path(input_dir) / (name + ext)
                     break
 
-            if found == None:
+            if found is None:
                 continue
             missing_labels.append(found)
 

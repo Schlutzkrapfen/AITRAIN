@@ -28,8 +28,8 @@ def _make_folder_structure(trash_folder):
         try:
             os.makedirs(full_path)
         except FileExistsError:
-            print(f"Directory for files already exists, for train and val data")
-            if choice == None:
+            print("Directory for files already exists, for train and val data")
+            if choice is None:
                 choice = (
                     input("Remove files inside it? No (N), Yes (y): ").strip().lower()
                 )
@@ -114,7 +114,7 @@ def copy_everything_for_single_traning(
             classname_to_images[single_name].append(current_image_path)
             classname_to_labels[single_name].append(current_label_path)
 
-    if split_prozent == None:
+    if split_prozent is None:
         split_prozent = _get_split_ratio()
 
     save_pictures_single_folder(classname_to_images, split_prozent)
