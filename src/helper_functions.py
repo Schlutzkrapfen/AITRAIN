@@ -48,7 +48,7 @@ def move_to_trash_folder(paths, trash_folder, name="file"):
     print(f"moved every {name} to {trash_folder}")
 
 
-def get_label_from_ordered(path_to_labels) -> list[Path]:
+def get_label_from_ordered(path_to_labels: Path) -> list[Path]:
     """Returns all Labels that are alrady in a val and Train folder from the path_to_labels they are sorted"""
     labels_set = get_label_path(path_to_labels / "val").union(
         get_label_path(path_to_labels / "train")
@@ -57,7 +57,7 @@ def get_label_from_ordered(path_to_labels) -> list[Path]:
     return labels
 
 
-def get_images_from_ordered(path_to_pictures) -> list[Path]:
+def get_images_from_ordered(path_to_pictures: Path) -> list[Path]:
     """Returns all images that are alrady in a val and Train folder from the path_to_pictures they are sorted"""
     images_set = get_images_path(path_to_pictures / "val").union(
         get_images_path(path_to_pictures / "train")

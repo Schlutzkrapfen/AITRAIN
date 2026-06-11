@@ -1,8 +1,12 @@
 import os
+import random
 import shutil
 import sys
 from collections import defaultdict
 from pathlib import Path
+
+from numpy._typing import _UnknownType
+from sympy.integrals import deltafunctions
 
 from helper_functions import (
     change_yaml_to_id_output,
@@ -41,10 +45,10 @@ def _make_folder_structure(trash_folder):
             print(f"Unexpected error at '{full_path}': {e}")
 
 
-def _get_split_ratio() -> float:
+def _get_split_ratio(text: str = "What percentage for training? (e.g. 80): ") -> float:
     """Prompt user for a train/val split percentage and return it as a ratio."""
     while True:
-        amount = input("What percentage for training? (e.g. 80): ").strip()
+        amount = input(text).strip()
         if amount.isdigit() and 0 < int(amount) < 100:
             return int(amount) / 100
         print("Please enter a number between 1 and 99.")
@@ -85,7 +89,10 @@ def split(input_dir, text_dir, trash_folder):
 
 
 def copy_everything_for_single_traning(
-    path_to_pictures, path_to_labels, split_prozent=None, yaml_path="data.yaml"
+    path_to_pictures: Path,
+    path_to_labels: Path,
+    split_prozent: float | None = None,
+    yaml_path: str = "data.yaml",
 ):
     """
     Prepares and copies images and labels for single-label training.
@@ -103,8 +110,8 @@ def copy_everything_for_single_traning(
     print(f"{len(images)} images found {len(labels)} labels found")
     classnames = get_classnames(labels, yaml_path)
 
-    classname_to_images = defaultdict(list)
-    classname_to_labels = defaultdict(list)
+    classname_to_images: defaultdict[str, list[Path]] = defaultdict(list)
+    classname_to_labels: defaultdict[str, list[Path]] = defaultdict(list)
 
     for i, names in enumerate(classnames):
         current_image_path = images[i]
@@ -119,6 +126,54 @@ def copy_everything_for_single_traning(
 
     save_pictures_single_folder(classname_to_images, split_prozent)
     save_label_single_folder(classname_to_labels, split_prozent)
+    add_prozent = _get_split_ratio(
+        "How much % pictures do you want to add empty labels against overfitting (e. 10%) "
+    )
+    add_empty_pictures(classname_to_images, prozent=add_prozent)
+
+
+def add_empty_pictures(
+    classname_to_images: defaultdict[str, list[Path]], prozent: float = 0.1
+) -> list[Path]:
+    """
+    Adds background images with empty labels to each class folder.
+    Samples images from other classes to act as negative examples,
+    which helps the model learn to suppress false positives.
+
+    Args:
+        classname_to_images: Mapping of class name to its list of image paths.
+        prozent: Fraction of each class's images to add as background samples. Defaults to 0.1 (10%).
+
+    Returns:
+        List of paths of all copied background images.
+    """
+    if prozent == 0:
+        return []
+    empty_images: list[Path] = []
+    all_images = list(
+        {img for images in classname_to_images.values() for img in images}
+    )
+    for split_type, current_images in classname_to_images.items():
+        sanitized_name = sanitize_folder_name(split_type)
+        dest = f"single_label_runs/{sanitized_name}"
+        # Filter the Images (The filter could be removed if the Call of the function
+        # is bevor the right labels are used[if Perfomance Problems Remove and change order])
+        available_images = [
+            img
+            for img in all_images
+            if not Path(f"{dest}/images/train/{Path(img).name}").exists()
+        ]
+        picture_add_amount = max(1, round(len(current_images) * prozent))
+        sampled = random.sample(
+            available_images, min(picture_add_amount, len(available_images))
+        )
+
+        for paths in sampled:
+            shutil.copy2(paths, f"{dest}/images/train")
+            Path(f"{dest}/labels/train/{Path(paths).stem}.txt").touch()
+            empty_images.append(paths)
+
+    return empty_images
 
 
 def save_label_single_folder(classname_to_labels, split_prozent):
