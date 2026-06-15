@@ -70,7 +70,6 @@ def train_with_imporfment():
 
     def objective(trial):
         start_time = datetime.now()
-
         model = YOLO(YOLO_MODEL)
 
         # Suggest hyperparameters for this trial

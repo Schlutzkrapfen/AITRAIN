@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 import yaml
+from sqlalchemy.sql.coercions import expect
 
 from controll import check_files_exist
 from helper_functions import sanitize_folder_name
@@ -41,6 +42,28 @@ def make_yamls() -> list[Path]:
         make_yaml(single_label, folder_path)
         paths.append(folder_path)
     return paths
+
+
+def get_input(default_path: str = "single_label_runs") -> str:
+    while True:
+        user_input = input(
+            f"Please enter a label you want to train (look at the folder {default_path} )"
+        )
+        if input is None:
+            continue
+        path = os.path.join(default_path, user_input)
+        print(path)
+        print(os.path.exists(path))
+        if os.path.exists(Path(path)):
+            return path
+
+
+def train_on_single_label():
+    path = get_input()
+    try:
+        train(None, str(path))
+    except Exception as e:
+        print(f"Error:{e}")
 
 
 def train_on_each_label():
