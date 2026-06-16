@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 
 import yaml
-from sqlalchemy.sql.coercions import expect
 
 from controll import check_files_exist
 from helper_functions import sanitize_folder_name

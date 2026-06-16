@@ -5,9 +5,6 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from numpy._typing import _UnknownType
-from sympy.integrals import deltafunctions
-
 from helper_functions import (
     change_yaml_to_id_output,
     get_classnames,
