@@ -46,9 +46,9 @@ def _get_split_ratio(text: str = "What percentage for training? (e.g. 80): ") ->
     """Prompt user for a train/val split percentage and return it as a ratio."""
     while True:
         amount = input(text).strip()
-        if amount.isdigit() and 0 < int(amount) < 100:
+        if amount.isdigit() and 0 <= int(amount) < 100:
             return int(amount) / 100
-        print("Please enter a number between 1 and 99.")
+        print("Please enter a number between 0 and 99.")
 
 
 def split(input_dir, text_dir, trash_folder):
