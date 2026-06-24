@@ -217,6 +217,7 @@ def train(best=None, yaml_path="data.yaml"):
         epochs=EPOCHS_FINAL,
         patience=100,
         batch=6,
+        save_period=30,
         imgsz=1280,
         **best,
         hsv_h=0.0,
