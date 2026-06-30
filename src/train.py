@@ -6,7 +6,7 @@ from datetime import datetime
 import optuna
 from ultralytics import YOLO
 
-YOLO_MODEL_FINAL = "yolov8x.pt"
+YOLO_MODEL_FINAL = "yolo26x.pt"
 EPOCHS_FINAL = 200
 yaml_path = "data.yaml"
 
@@ -217,7 +217,7 @@ def train(best=None, yaml_path="data.yaml"):
         epochs=EPOCHS_FINAL,
         patience=100,
         batch=6,
-        save_period=30,
+        save_period=20,
         imgsz=1280,
         **best,
         hsv_h=0.0,
