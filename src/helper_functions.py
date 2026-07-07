@@ -35,7 +35,7 @@ def get_text_files_names(directory: Path) -> list[str]:
     return test
 
 
-def move_to_trash_folder(paths, trash_folder, name="file"):
+def move_to_trash_folder(paths, trash_folder: str, name: str = "file"):
     """moves file to a folder"""
     if not isinstance(paths, list):
         paths = [paths]

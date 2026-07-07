@@ -21,7 +21,7 @@ script_directory = Path(os.path.dirname(os.path.abspath(sys.argv[0])))
 FOLDER_STRUCTURE = ["images/train", "images/val", "labels/train", "labels/val"]
 
 
-def _make_folder_structure(trash_folder):
+def _make_folder_structure(trash_folder: str):
     """Create the required folder structure, prompting user to clear any that already exist."""
     choice = None
     for path in FOLDER_STRUCTURE:
@@ -51,7 +51,7 @@ def _get_split_ratio(text: str = "What percentage for training? (e.g. 80): ") ->
         print("Please enter a number between 0 and 99.")
 
 
-def split(input_dir, text_dir, trash_folder):
+def split(input_dir: Path, text_dir: Path, trash_folder: str):
     """Split matched image/label pairs into train and val folders."""
     _make_folder_structure(trash_folder)
 
@@ -173,7 +173,7 @@ def add_empty_pictures(
     return empty_images
 
 
-def save_label_single_folder(classname_to_labels, split_prozent):
+def save_label_single_folder(classname_to_labels, split_prozent: float):
     for split_type, current_label in classname_to_labels.items():
         sanitized_name = sanitize_folder_name(split_type)
         split_index = int(len(current_label) * split_prozent)
@@ -193,7 +193,7 @@ def save_label_single_folder(classname_to_labels, split_prozent):
             formatt_lines(new_label=new_label, split_type=split_type)
 
 
-def save_pictures_single_folder(classname_to_images, split_prozent):
+def save_pictures_single_folder(classname_to_images, split_prozent: float):
     for split_type, current_images in classname_to_images.items():
         sanitize_name = sanitize_folder_name(split_type)
         split_index = int(len(current_images) * split_prozent)

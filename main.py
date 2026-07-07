@@ -2,8 +2,6 @@ import os
 import sys
 from pathlib import Path
 
-USER_DATA_DIR = "user_data"
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from change_labels import change_labels
 from controll import check_files_exist
 from make_yaml import make_yaml
@@ -11,6 +9,10 @@ from single_label_train import train_on_each_label, train_on_single_label
 from split import split
 from summery import make_summery
 from train import train
+
+USER_DATA_DIR = "user_data"
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+
 
 base_dir = Path("./InputFolder")
 input_dir = base_dir / "images"
