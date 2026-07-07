@@ -4,6 +4,7 @@ from pathlib import Path
 
 USER_DATA_DIR = "user_data"
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+from change_labels import change_labels
 from controll import check_files_exist
 from make_yaml import make_yaml
 from single_label_train import train_on_each_label, train_on_single_label
@@ -35,7 +36,7 @@ What do you want to train:
 
 """
 
-VALID_CHOICES = {"0", "1", "2", "3", "4", "5", ""}
+VALID_CHOICES = {"0", "1", "2", "3", "4", "5", "6", ""}
 VALID_CHOICES_TRAIN = {"0", "1", "2"}
 
 
@@ -98,10 +99,11 @@ def main():
                         case "2":
                             train_on_single_label()
                     break
-
             case "4":
-                make_summery()
+                change_labels(classes_dir)
             case "5":
+                make_summery()
+            case "6":
                 break
         print("finished")
         answer = (
