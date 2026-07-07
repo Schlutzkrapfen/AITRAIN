@@ -57,7 +57,21 @@ def main():
                 if check_files_exist(input_dir, text_dir, trash_folder):
                     split(input_dir, text_dir, trash_folder)
                     make_yaml(classes_dir)
-                # train()
+                while True:
+                    print("War: Training is in Devolpment is not finished")
+                    answer_train = input(TRAIN_MENU).strip()
+
+                    if answer not in VALID_CHOICES_TRAIN:
+                        print("Error: not a valid input")
+                        continue
+                    match answer_train:
+                        case "0":
+                            train()
+                        case "1":
+                            train_on_each_label()
+                        case "2":
+                            train_on_single_label()
+                    break
                 make_summery()
                 print("finished")
                 print("closing")
@@ -72,16 +86,18 @@ def main():
                 while True:
                     print("War: Training is in Devolpment is not finished")
                     answer_train = input(TRAIN_MENU).strip()
-
-                    if answer in VALID_CHOICES_TRAIN:
-                        break
+                    if answer_train not in VALID_CHOICES_TRAIN:
+                        print("Error: not a valid input")
+                        continue
                     match answer_train:
                         case "0":
                             train()
+
                         case "1":
                             train_on_each_label()
                         case "2":
                             train_on_single_label()
+                    break
 
             case "4":
                 make_summery()

@@ -1,7 +1,7 @@
 import yaml
 
 
-def get_classes(classes_dir):
+def get_classes(classes_dir) -> list[str]:
     try:
         with open(classes_dir, "r") as f:
             return [line.strip() for line in f if line.strip()]
@@ -14,7 +14,7 @@ def make_yaml(classes_dir, path_to_yaml="data.yaml", path_to_pictures="images"):
     """Generate data.yaml config file for YOLO training."""
     classes = get_classes(classes_dir)
     if classes is None:
-        ValueError
+        raise ValueError("classes cannot be None")
 
     data = {
         "nc": len(classes),
