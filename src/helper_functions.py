@@ -108,12 +108,13 @@ def change_yaml_to_id_output(text: str, yaml_path: str = "data.yaml") -> int:
     return _load_name_to_id(yaml_path).get(text, -1)
 
 
-def _load_name_to_id(yaml_path: str = "data.yaml") -> dict:
+def _load_name_to_id(yaml_path: str = "data.yaml") -> dict[str, int]:
+    """loads every label out of the yaml file"""
     with open(yaml_path, "r") as f:
         data = yaml.safe_load(f)
     return {v: k for k, v in data["names"].items()}
 
 
-def sanitize_folder_name(name):
-    # Replace / and other invalid path characters with an underscore
+def sanitize_folder_name(name: str):
+    """Replace / and other invalid path characters with an underscore"""
     return re.sub(r'[<>:"/\\|?*]', "_", name)

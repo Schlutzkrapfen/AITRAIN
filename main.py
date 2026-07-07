@@ -24,8 +24,9 @@ What do you want to do?
   1 - Check if there are Input Files
   2 - Split up the Input Files
   3 - Train
-  4 - Get a Summary
-  5 - Quit
+  4 - Delete/Merges Labels
+  5 - Get a Summary
+  6 - Quit
 """
 
 TRAIN_MENU = """
@@ -100,7 +101,7 @@ def main():
                             train_on_single_label()
                     break
             case "4":
-                change_labels(classes_dir)
+                change_labels()
             case "5":
                 make_summery()
             case "6":
