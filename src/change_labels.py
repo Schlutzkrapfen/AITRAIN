@@ -28,7 +28,7 @@ def change_labels():
 
 def get_input(labels: dict[str, int], input_text: str) -> list[int]:
     while True:
-        answers = input(input_text).strip().split()
+        answers = input(input_text).strip().split(",")
         numbers = []
         try:
             for answer in answers:
@@ -60,7 +60,8 @@ def remove_labels():
     labels = _load_name_to_id()
     print(labels)
     number = get_input(
-        labels, "Which label do you want to delete (name or number, or 'done'): "
+        labels,
+        "Which label do you want to delete (name(s) or number(s), or 'done') with ',' split the numbers or names : ",
     )
     if number == [-1]:
         return
