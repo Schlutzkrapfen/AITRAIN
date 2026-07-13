@@ -11,7 +11,7 @@ EPOCHS_FINAL = 400
 yaml_path = "data.yaml"
 
 
-DEFAULT_BEST = {
+DEFAULT_BEST_TRAIN : dict[str,float]= {
     "lr0": 0.001,
     "lrf": 0.01,
     "momentum": 0.937,
@@ -30,6 +30,21 @@ DEFAULT_BEST = {
     "mosaic": 1.0,
     "mixup": 0.0,
 }
+DEFAULT_BEST: dict[str,float] = {
+    "hsv_v":0.1298475098822829,
+    "degrees":1.1726329263671524,
+    "translate": 0.10176726981752914,
+    "scale":0.07337395520778134,
+    "shear":   2.724815803815312,
+    "fliplr":0.4579165369331938,
+    "mosaic":0.08802390302725875,
+    "erasing":0.46650800721881935,
+    "lr0":0.0001380708327673594,
+    "lrf":0.07423379721409629,
+    "cls":2.6323141597561377,
+    "box":5.398870443621671
+}
+
 
 
 def train_with_imporfment():

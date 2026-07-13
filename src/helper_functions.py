@@ -66,7 +66,7 @@ def get_images_from_ordered(path_to_pictures: Path) -> list[Path]:
     return images
 
 
-def get_classnames(labels, yaml_path) -> list[str]:
+def get_classnames(labels, yaml_path: str) -> list[str]:
     """Extracts unique class IDs from label files and maps them to their names via a YAML file.
 
     Args:
