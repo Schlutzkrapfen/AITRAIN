@@ -6,7 +6,7 @@ from datetime import datetime
 import optuna
 from ultralytics import YOLO
 
-YOLO_MODEL_FINAL = "yolo26x.pt"
+YOLO_MODEL_FINAL = "yolo11x.pt"
 EPOCHS_FINAL = 400
 yaml_path = "data.yaml"
 
