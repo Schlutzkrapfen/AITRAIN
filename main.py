@@ -9,7 +9,7 @@ from make_yaml import make_yaml
 from single_label_train import train_on_each_label, train_on_single_label
 from split import split
 from summery import make_summery
-from train import train
+from train import how_to_train, train
 
 USER_DATA_DIR = "user_data"
 
@@ -31,29 +31,12 @@ What do you want to do?
   6 - Quit
 """
 
-TRAIN_MENU = """
-What do you want to train:
-    0 - Single Run
-    1 - Every Label and splitt up the folder
-    2 - A Single Label
 
-"""
-
-VALID_CHOICES = {"0", "1", "2", "3", "4", "5", "6", ""}
-VALID_CHOICES_TRAIN = {"0", "1", "2"}
 
 
 def main():
     while True:
-        while True:
-            answer = input(MENU).strip()
-
-            if answer in VALID_CHOICES:
-                answer = answer if answer != "" else "0"
-                break
-
-            print(f"Invalid input '{answer}'. Please enter a number between 0 and 5.\n")
-
+        answer = input(MENU).strip()
         print(f"You chose: {answer}")
 
         match answer:
@@ -61,21 +44,8 @@ def main():
                 if check_files_exist(input_dir, text_dir, trash_folder):
                     split(input_dir, text_dir, trash_folder)
                     make_yaml(classes_dir)
-                while True:
-                    print("War: Training is in Devolpment is not finished")
-                    answer_train = input(TRAIN_MENU).strip()
 
-                    if answer not in VALID_CHOICES_TRAIN:
-                        print("Error: not a valid input")
-                        continue
-                    match answer_train:
-                        case "0":
-                            train()
-                        case "1":
-                            train_on_each_label()
-                        case "2":
-                            train_on_single_label()
-                    break
+                how_to_train()
                 make_summery()
                 print("finished")
                 print("closing")
@@ -87,27 +57,16 @@ def main():
                     split(input_dir, text_dir, trash_folder)
                     make_yaml(classes_dir)
             case "3":
-                while True:
-                    print("War: Training is in Devolpment is not finished")
-                    answer_train = input(TRAIN_MENU).strip()
-                    if answer_train not in VALID_CHOICES_TRAIN:
-                        print("Error: not a valid input")
-                        continue
-                    match answer_train:
-                        case "0":
-                            train()
-
-                        case "1":
-                            train_on_each_label()
-                        case "2":
-                            train_on_single_label()
-                    break
+                how_to_train()
             case "4":
                 change_labels()
             case "5":
                 make_summery()
             case "6":
                 break
+            case _:
+                print(f"Invalid input '{answer}'. Please enter a number between 0 and 5.\n")
+                continue
         print("finished")
         answer = (
             input("Do you want to do something else. N no, y yes: ").strip().lower()

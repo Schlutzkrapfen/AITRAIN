@@ -2,6 +2,7 @@ import csv
 import json
 import os
 from datetime import datetime
+from single_label_train import train_on_each_label,train_on_single_label
 
 import optuna
 from ultralytics import YOLO
@@ -10,6 +11,13 @@ YOLO_MODEL_FINAL = "yolo26x.pt"
 EPOCHS_FINAL = 400
 yaml_path = "data.yaml"
 
+TRAIN_MENU = """
+What do you want to train:
+    0 - Single Run
+    1 - Every Label and splitt up the folder
+    2 - A Single Label
+
+"""
 
 DEFAULT_BEST_TRAIN : dict[str,float]= {
     "lr0": 0.001,
@@ -242,3 +250,22 @@ def train(best=None, yaml_path="data.yaml"):
         auto_augment=False,
         optimizer="AdamW",
     )
+
+
+def how_to_train():
+    while True:
+                        print("War: Training is in Devolpment is not finished")
+                        answer_train = input(TRAIN_MENU).strip()
+
+                        match answer_train:
+                            case "0":
+                                train()
+                            case "1":
+                                train_on_each_label()
+                            case "2":
+                                train_on_single_label()
+                            case _:
+                                print("Error: not a valid input")
+                                continue
+
+                        break
