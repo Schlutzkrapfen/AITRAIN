@@ -1,6 +1,7 @@
 import re
 import shutil
 from pathlib import Path
+from typing import cast
 
 import yaml
 
@@ -17,25 +18,23 @@ def get_label_path(directory: Path) -> set[Path]:
     return {f for f in directory.iterdir() if f.suffix.lower() == ".txt"}
 
 
-def get_images_names(directory: Path) -> set[str]:
+def get_images_names(directory: Path) -> set[Path]:
     """Gets all the names of images out of a folder endings png, jpg and jpeg"""
-    return {
-        f.name[: -len(f.suffix)]
-        for f in directory.iterdir()
-        if f.suffix.lower() in IMAGE_EXTENSIONS
-    }
+    return {f for f in directory.iterdir() if f.suffix.lower() in IMAGE_EXTENSIONS}
 
 
-def get_text_files_names(directory: Path) -> list[str]:
+
+def get_text_files_names(directory: Path) -> list[Path]:
     """gets all the names of labels in a folder ending (txt)"""
-    test:list[str] = []
+    test:list[Path] = []
     for f in directory.iterdir():
         if f.suffix.lower() == ".txt":
-            test.append(f.name[: -len(f.suffix)])
+            test.append(Path(f.name[: -len(f.suffix)]))
     return test
 
 
-def move_to_trash_folder(paths, trash_folder: Path, name: str = "file"):
+def move_to_trash_folder(paths:list[Path], trash_folder: Path, name: str = "file"):
+
     """moves file to a folder"""
     if not isinstance(paths, list):
         paths = [paths]

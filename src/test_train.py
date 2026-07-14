@@ -1,4 +1,5 @@
-from unittest.mock import MagicMock, patch, mock_open, call
+from unittest.mock import MagicMock
+
 def make_mock_results(mAP50:float=0.75, save_dir:str|None=None):
     """Returns a mock YOLO results object."""
     results = MagicMock()
