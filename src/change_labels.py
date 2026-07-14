@@ -83,7 +83,6 @@ def remove_numbers_from_labes(numbers: list[int], paths: set[Path]):
                 print(f"Updated labels in {path}")
 
 
-#IN PROGRESS
 def remove_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
     for _number in numbers:
         with open(path, "r") as f:

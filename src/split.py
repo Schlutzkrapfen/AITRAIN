@@ -64,12 +64,12 @@ def split(input_dir: Path, text_dir: Path, trash_folder: Path):
     val_pairs = pairs[split_index:]
 
     for img, lbl in train_pairs:
-        shutil.copy2(str(img), script_directory / "images/train" / Path(img).name)
-        shutil.copy2(str(lbl), script_directory / "labels/train" / Path(lbl).name)
+        _move0 = shutil.copy2(str(img), script_directory / "images/train" / Path(img).name)
+        _move1 = shutil.copy2(str(lbl), script_directory / "labels/train" / Path(lbl).name)
 
     for img, lbl in val_pairs:
-        shutil.copy2(str(img), script_directory / "images/val" / Path(img).name)
-        shutil.copy2(str(lbl), script_directory / "labels/val" / Path(lbl).name)
+        _move2 = shutil.copy2(str(img), script_directory / "images/val" / Path(img).name)
+        _move3 = shutil.copy2(str(lbl), script_directory / "labels/val" / Path(lbl).name)
 
     print(f"Done: {len(train_pairs)} train pairs, {len(val_pairs)} val pairs.")
 

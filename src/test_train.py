@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, create_autospec
 
 def make_mock_results(mAP50:float=0.75, save_dir:str|None=None):
     """Returns a mock YOLO results object."""
@@ -15,7 +15,7 @@ def make_mock_results(mAP50:float=0.75, save_dir:str|None=None):
 
 def make_mock_yolo(mAP50:float=0.75, save_dir:str='/fake/runs/detect/train1'):
     """Returns a mock YOLO class whose .train() returns fake results."""
-    mock_model = MagicMock()
-    mock_model.train.return_value = make_mock_results(mAP50, save_dir)
+    mock_model = create_autospec(RealModelClass, instance=True)
+    mock_model.train.return_value = make_mock_results(mAP50, save_dir))
     MockYOLO = MagicMock(return_value=mock_model)
     return MockYOLO, mock_model

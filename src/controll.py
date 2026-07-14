@@ -219,7 +219,7 @@ def check_files_exist(
 
     images_path = get_images_names(input_dir)
     text_path = get_text_files_names(text_dir)
-    check_if_duplicates_exist(
+    _bool = check_if_duplicates_exist(
         images_path=input_dir, delete_automatic=deleted_automaticly
     )
     if not check_if_images_labels_exits(input_dir, text_dir):
