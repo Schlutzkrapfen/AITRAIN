@@ -1,13 +1,14 @@
-import os
-from pathlib import Path
 
+import os
 import yaml
 
+from pathlib import Path
 from controll import check_files_exist
 from helper_functions import sanitize_folder_name
 from make_yaml import make_yaml
 from split import copy_everything_for_single_traning
 from train import train
+from typing import cast
 
 
 def make_file_structer(yaml_path:str):
@@ -15,7 +16,7 @@ def make_file_structer(yaml_path:str):
     folder_paths:list[str] = []
     with open(yaml_path) as stream:
         try:
-            for items in yaml.safe_load(stream)["names"].values():
+            for items in cast(str,yaml.safe_load(stream)["names"].values()):
                 target_path = os.path.join(
                     "single_label_runs", sanitize_folder_name(items)
                 )
@@ -36,7 +37,7 @@ def make_yamls() -> list[Path]:
     folder_paths = make_file_structer("data.yaml")
     paths:list[Path] = []
     for folder in folder_paths:
-        single_label = [os.path.basename(folder)]
+        single_label =Path(os.path.basename(folder))
         folder_path = os.path.join(folder, "data.yaml")
         make_yaml(single_label, folder_path)
         paths.append(Path(folder_path))

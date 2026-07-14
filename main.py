@@ -8,7 +8,7 @@ from controll import check_files_exist
 from make_yaml import make_yaml
 from split import split
 from summery import make_summery
-from train import how_to_train
+from train_starter import start_train
 
 USER_DATA_DIR = "user_data"
 
@@ -21,7 +21,7 @@ classes_dir = base_dir / "classes.txt"
 
 MENU = """
 What do you want to do?
-  0 (default) - Everything (1-4)
+  0 (default) - Everything (1-5)
   1 - Check if there are Input Files
   2 - Split up the Input Files
   3 - Train
@@ -44,7 +44,7 @@ def main():
                     split(input_dir, text_dir, trash_folder)
                     make_yaml(classes_dir)
 
-                how_to_train()
+                start_train()
                 make_summery()
                 print("finished")
                 print("closing")
@@ -57,7 +57,7 @@ def main():
                     split(input_dir, text_dir, trash_folder)
                     make_yaml(classes_dir)
             case "3":
-                how_to_train()
+                start_train()
             case "4":
                 change_labels()
             case "5":

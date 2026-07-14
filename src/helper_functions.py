@@ -66,7 +66,7 @@ def get_images_from_ordered(path_to_pictures: Path) -> list[Path]:
     return images
 
 
-def get_classnames(labels, yaml_path: str) -> list[str]:
+def get_classnames(labels:list[Path], yaml_path: str) -> list[str]:
     """Extracts unique class IDs from label files and maps them to their names via a YAML file.
 
     Args:
@@ -77,10 +77,10 @@ def get_classnames(labels, yaml_path: str) -> list[str]:
         A nested list where each sublist contains the string class names found
         in the corresponding label file.
     """
-    unique_ids = []
+    unique_ids:list[list[int]] = []
     for label_path in labels:
         try:
-            all_class_ids = []
+            all_class_ids:list[int] = []
             with open(label_path, "r") as file:
                 for line in file:
                     cleaned_line = line.strip()
