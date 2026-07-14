@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock, patch, mock_open, call
-def make_mock_results(mAP50=0.75, save_dir=None):
+def make_mock_results(mAP50:float=0.75, save_dir:str|None=None):
     """Returns a mock YOLO results object."""
     results = MagicMock()
     results.results_dict = {
@@ -10,9 +10,9 @@ def make_mock_results(mAP50=0.75, save_dir=None):
     }
     results.save_dir = save_dir or '/fake/runs/detect/train1'
     return results
- 
- 
-def make_mock_yolo(mAP50=0.75, save_dir='/fake/runs/detect/train1'):
+
+
+def make_mock_yolo(mAP50:float=0.75, save_dir:str='/fake/runs/detect/train1'):
     """Returns a mock YOLO class whose .train() returns fake results."""
     mock_model = MagicMock()
     mock_model.train.return_value = make_mock_results(mAP50, save_dir)

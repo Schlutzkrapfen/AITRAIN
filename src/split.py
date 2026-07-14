@@ -21,7 +21,7 @@ script_directory = Path(os.path.dirname(os.path.abspath(sys.argv[0])))
 FOLDER_STRUCTURE = ["images/train", "images/val", "labels/train", "labels/val"]
 
 
-def _make_folder_structure(trash_folder: str):
+def _make_folder_structure(trash_folder: Path):
     """Create the required folder structure, prompting user to clear any that already exist."""
     choice = None
     for path in FOLDER_STRUCTURE:
@@ -51,7 +51,7 @@ def _get_split_ratio(text: str = "What percentage for training? (e.g. 80): ") ->
         print("Please enter a number between 0 and 99.")
 
 
-def split(input_dir: Path, text_dir: Path, trash_folder: str):
+def split(input_dir: Path, text_dir: Path, trash_folder: Path):
     """Split matched image/label pairs into train and val folders."""
     _make_folder_structure(trash_folder)
 
@@ -126,7 +126,7 @@ def copy_everything_for_single_traning(
     add_prozent = _get_split_ratio(
         "How much % pictures do you want to add empty labels against overfitting (e. 10%) "
     )
-    add_empty_pictures(classname_to_images, prozent=add_prozent)
+    _list =  add_empty_pictures(classname_to_images, prozent=add_prozent)
 
 
 def add_empty_pictures(
@@ -166,7 +166,7 @@ def add_empty_pictures(
         )
 
         for paths in sampled:
-            shutil.copy2(paths, f"{dest}/images/train")
+            _path =  shutil.copy2(paths, f"{dest}/images/train")
             Path(f"{dest}/labels/train/{Path(paths).stem}.txt").touch()
             empty_images.append(paths)
 

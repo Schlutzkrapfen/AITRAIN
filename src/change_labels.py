@@ -79,12 +79,13 @@ def remove_numbers_from_labes(numbers: list[int], paths: set[Path]):
                     updated_lines.append(" ".join(parts))
 
             with open(path, "w") as f:
-                f.write("\n".join(updated_lines) + "\n" if updated_lines else "")
+                _written = f.write("\n".join(updated_lines) + "\n" if updated_lines else "")
                 print(f"Updated labels in {path}")
 
 
+#IN PROGRESS
 def remove_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
-    for number in numbers:
+    for _number in numbers:
         with open(path, "r") as f:
             pass
 

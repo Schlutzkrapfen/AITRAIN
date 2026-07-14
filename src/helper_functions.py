@@ -28,14 +28,14 @@ def get_images_names(directory: Path) -> set[str]:
 
 def get_text_files_names(directory: Path) -> list[str]:
     """gets all the names of labels in a folder ending (txt)"""
-    test = []
+    test:list[str] = []
     for f in directory.iterdir():
         if f.suffix.lower() == ".txt":
             test.append(f.name[: -len(f.suffix)])
     return test
 
 
-def move_to_trash_folder(paths, trash_folder: str, name: str = "file"):
+def move_to_trash_folder(paths, trash_folder: Path, name: str = "file"):
     """moves file to a folder"""
     if not isinstance(paths, list):
         paths = [paths]

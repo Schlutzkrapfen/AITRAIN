@@ -6,10 +6,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 from change_labels import change_labels
 from controll import check_files_exist
 from make_yaml import make_yaml
-from single_label_train import train_on_each_label, train_on_single_label
 from split import split
 from summery import make_summery
-from train import how_to_train, train
+from train import how_to_train
 
 USER_DATA_DIR = "user_data"
 
@@ -51,7 +50,8 @@ def main():
                 print("closing")
                 break
             case "1":
-                check_files_exist(input_dir, text_dir, trash_folder)
+                _bool =  check_files_exist(input_dir, text_dir, trash_folder)
+
             case "2":
                 if check_files_exist(input_dir, text_dir, trash_folder):
                     split(input_dir, text_dir, trash_folder)

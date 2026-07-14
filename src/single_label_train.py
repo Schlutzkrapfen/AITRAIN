@@ -10,9 +10,9 @@ from split import copy_everything_for_single_traning
 from train import train
 
 
-def make_file_structer(yaml_path):
+def make_file_structer(yaml_path:str):
     os.makedirs("./single_label_runs", exist_ok=True)
-    folder_paths = []
+    folder_paths:list[str] = []
     with open(yaml_path) as stream:
         try:
             for items in yaml.safe_load(stream)["names"].values():
@@ -34,12 +34,12 @@ def make_file_structer(yaml_path):
 
 def make_yamls() -> list[Path]:
     folder_paths = make_file_structer("data.yaml")
-    paths = []
+    paths:list[Path] = []
     for folder in folder_paths:
         single_label = [os.path.basename(folder)]
         folder_path = os.path.join(folder, "data.yaml")
         make_yaml(single_label, folder_path)
-        paths.append(folder_path)
+        paths.append(Path(folder_path))
     return paths
 
 
@@ -48,7 +48,7 @@ def get_input(default_path: str = "single_label_runs") -> str:
         user_input = input(
             f"Please enter a label you want to train (look at the folder {default_path} )"
         )
-        if input is None:
+        if input == "":
             continue
         path = os.path.join(default_path, user_input)
         print(path)

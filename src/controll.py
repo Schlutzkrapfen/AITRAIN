@@ -4,6 +4,8 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from pandas.core.arrays.arrow.accessors import pa
+
 from helper_functions import (
     get_images_names,
     get_label_path,
@@ -15,13 +17,13 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 script_directory = Path(sys.argv[0]).resolve().parent
 
 
-def images_have_labels(image_files, label_files, input_dir):
+def images_have_labels(image_files:set[str], label_files:list[str], input_dir:Path)-> list[Path]:
     """Check that every image in the directory has a corresponding .txt label file."""
 
     image_stems = {Path(f).name for f in image_files}
     label_stems = {Path(f).name for f in label_files}
     unlabeled = image_stems - label_stems
-    missing_labels = []
+    missing_labels:list[Path] = []
     if unlabeled:
         for name in sorted(unlabeled):
             print(f"Missing Label: {name}")
@@ -41,8 +43,8 @@ def images_have_labels(image_files, label_files, input_dir):
     return missing_labels
 
 
-def check_if_labels_empty(labels_path):
-    empty = []
+def check_if_labels_empty(labels_path:str)->list[str]:
+    empty:list[str] = []
     for labels in labels_path:
         if os.path.getsize(labels) == 0:
             empty.append(labels)
@@ -52,12 +54,12 @@ def check_if_labels_empty(labels_path):
     return empty
 
 
-def labels_have_images(image_files, label_files, text_dir):
+def labels_have_images(image_files:list[str], label_files:list[str], text_dir:str)->list[Path]:
     """Check that every image in the directory has a corresponding .txt label file."""
     image_stems = {Path(f).name for f in image_files}
     label_stems = {Path(f).name for f in label_files}
     unlabeled = label_stems - image_stems
-    missing_picture = []
+    missing_picture:list[Path] = []
     if unlabeled:
         for name in sorted(unlabeled):
             print(f"Missing Image: {name}")
@@ -67,16 +69,13 @@ def labels_have_images(image_files, label_files, text_dir):
     return missing_picture
 
 
-def chec_val_and_train_dublicates(images_path, val_path):
+def chec_val_and_train_dublicates(images_path:Path, val_path:Path):
     """Checks if any labels are in train and Label class"""
     train_files = set(os.listdir(images_path))
     val_files = set(os.listdir(val_path))
 
     overlap = train_files & val_files
     print(f"Direct overlap: {len(overlap)}")
-    overlap = images_path & val_path
-    print(f"Direct overlap: {len(overlap)}")
-    pass
 
 
 def _prompt_action(count: int, item_type: str, reason_type: str = "orphaned") -> str:
@@ -96,7 +95,7 @@ def _prompt_action(count: int, item_type: str, reason_type: str = "orphaned") ->
         print("Invalid input, please enter r, n or y")
 
 
-def check_if_images_labels_exits(images_path, text_path) -> bool:
+def check_if_images_labels_exits(images_path:str, text_path:str) -> bool:
     """checks if any labels or images exist"""
     if not images_path:
         print("No images in folder")
@@ -158,9 +157,9 @@ def hash_file(filepath, chunk_size=8192):
 
 
 def check_files_exist(
-    input_dir,
-    text_dir,
-    trash_folder=Path("Trash"),
+    input_dir:Path,
+    text_dir:Path,
+    trash_folder:Path = Path("Trash"),
     deleted_automaticly: bool = False,
 ) -> bool:
     """Validate image/label pairs and prompt user to resolve mismatches before training."""
@@ -168,7 +167,7 @@ def check_files_exist(
     print(images_path)
     print(input_dir)
     text_path = get_text_files_names(text_dir)
-    if not check_if_images_labels_exits(images_path, text_path):
+    if not check_if_images_labels_exits(str(images_path),str(text_path)):
         return False
 
     # Check images missing labels

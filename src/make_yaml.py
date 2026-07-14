@@ -1,19 +1,21 @@
+from queue import Empty
+
+from pathlib import Path
 import yaml
 
 
-def get_classes(classes_dir) -> list[str]:
+def get_classes(classes_dir:Path) -> list[str]:
     try:
         with open(classes_dir, "r") as f:
             return [line.strip() for line in f if line.strip()]
     except Exception as e:
-        print(f"Error:{e}")
-        return classes_dir
+        raise ValueError(f"Error can't get classes:{e}")
 
 
-def make_yaml(classes_dir, path_to_yaml="data.yaml", path_to_pictures="images"):
+def make_yaml(classes_dir:Path, path_to_yaml:str="data.yaml", path_to_pictures:str="images"):
     """Generate data.yaml config file for YOLO training."""
     classes = get_classes(classes_dir)
-    if classes is None:
+    if classes is Empty:
         raise ValueError("classes cannot be None")
 
     data = {
