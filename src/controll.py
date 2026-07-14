@@ -4,7 +4,6 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from pandas.core.arrays.arrow.accessors import pa
 
 from helper_functions import (
     get_images_names,
