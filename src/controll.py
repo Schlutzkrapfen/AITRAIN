@@ -162,6 +162,7 @@ def check_files_exist(
     deleted_automaticly: bool = False,
 ) -> bool:
     """Validate image/label pairs and prompt user to resolve mismatches before training."""
+
     images_path = get_images_names(input_dir)
     print(images_path)
     print(input_dir)

@@ -18,7 +18,7 @@ def change_labels():
             case "0":
                 remove_labels()
             case "1":
-                pass
+                modify_labels()
             case "2":
                 return
             case _:
@@ -26,7 +26,7 @@ def change_labels():
                 continue
 
 
-def get_input(labels: dict[str, int], input_text: str) -> list[int]:
+def get_input(labels: dict[str, int], input_text: str,needs_two:bool= False) -> list[int]:
     while True:
         answers = input(input_text).strip().split(",")
         numbers: list[int] = []
@@ -50,6 +50,14 @@ def get_input(labels: dict[str, int], input_text: str) -> list[int]:
                     numbers.append(number)
                 else:
                     raise ValueError(f"Not a valid name or number: {answer}")
+            numbers =  list(set(numbers))
+
+            if needs_two and len(numbers) <= 1:
+                raise ValueError("Needs more than one number")
+
+
+
+
 
             return numbers
         except ValueError as e:
@@ -91,9 +99,22 @@ def load_names(path: str = "data.yaml") -> dict[int,str]:
 
     return data["names"]
 
+def modify_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
+    names:dict[int,str] =  load_names(path)
+    updated_lines:dict[int,str] = {}
+    targets = sorted(numbers)
+    for key, value in names.items():
+        if key in targets:
+                # Skip/delete this key
+                continue
+
+        shift = sum(1 for num in targets if num < key)
+        updated_lines[key - shift] = value
+
+    write_yaml(updated_lines, path)
+
+
 def remove_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
-
-
     names:dict[int,str] =  load_names(path)
     updated_lines:dict[int,str] = {}
     targets = sorted(numbers)
@@ -132,3 +153,19 @@ def remove_labels():
     paths.update(get_label_path(Path("labels/val")))
     remove_numbers_from_labes(number, paths)
     remove_numbers_from_yaml(number)
+
+def modify_labels():
+    labels: dict[str, int] = _load_name_to_id()
+    print(labels)
+    number: list[int] = get_input(
+        labels,
+        "Which label do you want to combine (name(s) or number(s), or 'done') with ',' split the numbers or names, the first name will be used :\n as an example if you give as input 2,0 .0 will be changed to 2  ",
+    )
+
+    if number == [-1]:
+        print("skipped")
+        return
+    paths: set[Path] = get_label_path(Path("labels/train"))
+    paths.update(get_label_path(Path("labels/val")))
+
+    remove_numbers_from_yaml(number[1:])

@@ -1,7 +1,6 @@
 import re
 import shutil
 from pathlib import Path
-from typing import cast
 
 import yaml
 
