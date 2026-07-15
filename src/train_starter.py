@@ -10,6 +10,7 @@ What do you want to train:
 
 """
 def start_train():
+    """small script for controlling what you want to train"""
     while True:
         print("War: Training is in Devolpment is not finished")
         answer_train = input(TRAIN_MENU).strip()

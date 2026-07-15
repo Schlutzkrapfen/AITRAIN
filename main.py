@@ -35,6 +35,7 @@ What do you want to do?
 
 
 def main():
+    """Main Programm"""
     while True:
         answer = input(MENU).strip()
         print(f"You chose: {answer}")
