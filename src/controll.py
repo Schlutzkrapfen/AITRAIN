@@ -16,7 +16,7 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 script_directory = Path(sys.argv[0]).resolve().parent
 
 
-def images_have_labels(image_files:set[Path], label_files:list[Path], input_dir:Path)-> list[Path]:
+def images_have_labels(image_files:set[Path], label_files:set[Path], input_dir:Path)-> list[Path]:
     """Check that every image in the directory has a corresponding .txt label file."""
 
     image_stems = {Path(f).name for f in image_files}

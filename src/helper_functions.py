@@ -23,12 +23,12 @@ def get_images_names(directory: Path) -> set[Path]:
 
 
 
-def get_text_files_names(directory: Path) -> list[Path]:
+def get_text_files_names(directory: Path) -> set[Path]:
     """gets all the names of labels in a folder ending (txt)"""
-    test:list[Path] = []
+    test:set[Path] = set()
     for f in directory.iterdir():
         if f.suffix.lower() == ".txt":
-            test.append(Path(f.name[: -len(f.suffix)]))
+            test.add(Path(f.name[: -len(f.suffix)]))
     return test
 
 
