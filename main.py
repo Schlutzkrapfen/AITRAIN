@@ -25,14 +25,11 @@ What do you want to do?
   0 (default) - Everything (1-5)
   1 - Check if there are Input Files
   2 - Split up the Input Files
-  3 - Train
-  4 - Delete/Merges Labels
+  3 - Delete/Merges Labels
+  4 - Train
   5 - Get a Summary
   6 - Quit
 """
-
-
-
 
 def main():
     """Main Programm"""
@@ -59,9 +56,9 @@ def main():
                     split(input_dir, text_dir, trash_folder)
                     make_yaml(classes_dir)
             case "3":
-                start_train()
-            case "4":
                 change_labels()
+            case "4":
+                start_train()
             case "5":
                 make_summery()
             case "6":
