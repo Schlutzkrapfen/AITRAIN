@@ -11,18 +11,17 @@ What do you want to train:
 """
 def start_train():
     while True:
-                        print("War: Training is in Devolpment is not finished")
-                        answer_train = input(TRAIN_MENU).strip()
+        print("War: Training is in Devolpment is not finished")
+        answer_train = input(TRAIN_MENU).strip()
+        match answer_train:
+            case "0":
+                train()
+            case "1":
+                train_on_each_label()
+            case "2":
+                train_on_single_label()
+            case _:
+                print("Error: not a valid input")
+                continue
 
-                        match answer_train:
-                            case "0":
-                                train()
-                            case "1":
-                                train_on_each_label()
-                            case "2":
-                                train_on_single_label()
-                            case _:
-                                print("Error: not a valid input")
-                                continue
-
-                        break
+        break

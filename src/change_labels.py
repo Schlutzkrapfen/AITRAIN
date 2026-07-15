@@ -1,4 +1,5 @@
 from pathlib import Path
+import yaml
 
 from helper_functions import _load_name_to_id, get_label_path
 
@@ -82,11 +83,39 @@ def remove_numbers_from_labes(numbers: list[int], paths: set[Path]):
                 _written = f.write("\n".join(updated_lines) + "\n" if updated_lines else "")
                 print(f"Updated labels in {path}")
 
+def load_names(path: str = "data.yaml") -> dict[int,str]:
+    """Read only the names dict from the yaml file."""
+    with open(path, "r") as f:
+        data = yaml.safe_load(f)
+
+
+    return data["names"]
 
 def remove_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
-    for _number in numbers:
-        with open(path, "r") as f:
-            pass
+
+
+    names:dict[int,str] =  load_names(path)
+    updated_lines:dict[int,str] = {}
+    targets = sorted(numbers)
+    for key, value in names.items():
+        if key in targets:
+                # Skip/delete this key
+                continue
+
+        shift = sum(1 for num in targets if num < key)
+        updated_lines[key - shift] = value
+    write_yaml(updated_lines, path)
+
+
+
+def write_yaml(names:dict[int,str], path:str= "data.yaml"):
+    with open(path, "r") as f:
+        data = yaml.safe_load(f) or {}
+
+    data["names"] = names
+
+    with open(path, "w") as f:
+        yaml.safe_dump(data, f, default_flow_style=False)
 
 
 def remove_labels():
