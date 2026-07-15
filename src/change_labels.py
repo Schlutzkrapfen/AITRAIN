@@ -55,10 +55,6 @@ def get_input(labels: dict[str, int], input_text: str,needs_two:bool= False) -> 
             if needs_two and len(numbers) <= 1:
                 raise ValueError("Needs more than one number")
 
-
-
-
-
             return numbers
         except ValueError as e:
             print(f"{e} try again")
@@ -100,13 +96,21 @@ def load_names(path: str = "data.yaml") -> dict[int,str]:
     return data["names"]
 
 def modify_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
+    """Replaces target names with a master label and shifts remaining keys down.
+
+        Args:
+            numbers: A list where the first element is the source index (master),
+                and all subsequent elements are target indices to be overwritten.
+            path: The file path to the YAML file.
+        """
     names:dict[int,str] =  load_names(path)
     updated_lines:dict[int,str] = {}
-    targets = sorted(numbers)
+    targets = sorted(numbers[1:])
     for key, value in names.items():
         if key in targets:
-                # Skip/delete this key
-                continue
+            updated_lines[key] = names[numbers[0]]
+            continue
+
 
         shift = sum(1 for num in targets if num < key)
         updated_lines[key - shift] = value
