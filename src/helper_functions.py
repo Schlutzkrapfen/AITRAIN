@@ -8,23 +8,57 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 
 
 def get_images_path(directory: Path) -> set[Path]:
-    """Gets all the paths of images out of a folder with endings png, jpg and jpeg"""
+    """Finds all image file paths in a directory.
+
+        Filters for files ending in common image extensions (.png, .jpg, .jpeg).
+
+        Args:
+            directory: The Path object pointing to the directory to search.
+
+        Returns:
+            A set of Path objects for all matching image files.
+        """
     return {f for f in directory.iterdir() if f.suffix.lower() in IMAGE_EXTENSIONS}
 
 
 def get_label_path(directory: Path) -> set[Path]:
-    """gets all the paths of labels in a folder"""
+    """Finds all label file paths in a directory.
+
+        Filters specifically for files with a .txt extension.
+
+        Args:
+            directory: The Path object pointing to the directory to search.
+
+        Returns:
+            A set of Path objects for all matching text label files.
+        """
     return {f for f in directory.iterdir() if f.suffix.lower() == ".txt"}
 
 
 def get_images_names(directory: Path) -> set[Path]:
-    """Gets all the names of images out of a folder endings png, jpg and jpeg"""
+    """Finds all image file paths in a directory.
+
+        Filters for files ending in common image extensions (.png, .jpg, .jpeg).
+
+        Args:
+            directory: The Path object pointing to the directory to search.
+
+        Returns:
+            A set of Path objects for all matching image files.
+        """
     return {f for f in directory.iterdir() if f.suffix.lower() in IMAGE_EXTENSIONS}
 
 
 
 def get_text_files_names(directory: Path) -> set[Path]:
-    """gets all the names of labels in a folder ending (txt)"""
+    """Extracts the base names (without extensions) of all text files in a directory.
+
+        Args:
+            directory: The Path object pointing to the directory to search.
+
+        Returns:
+            A set of Path objects containing only the base filenames of the .txt files.
+        """
     test:set[Path] = set()
     for f in directory.iterdir():
         if f.suffix.lower() == ".txt":
@@ -34,7 +68,7 @@ def get_text_files_names(directory: Path) -> set[Path]:
 
 def move_to_trash_folder(paths:list[Path], trash_folder: Path, name: str = "file"):
 
-    """moves file to a folder"""
+    """moves file to a (trash) folder"""
     if not isinstance(paths, list):
         paths = [paths]
     for path in paths:

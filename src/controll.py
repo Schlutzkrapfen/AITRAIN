@@ -53,7 +53,7 @@ def check_if_labels_empty(labels_path:list[Path])->list[Path]:
     return empty
 
 
-def labels_have_images(image_files:list[Path], label_files:list[Path], text_dir:Path)->list[Path]:
+def labels_have_images(image_files:set[Path], label_files:set[Path], text_dir:Path)->list[Path]:
     """Check that every image in the directory has a corresponding .txt label file."""
     image_stems = {Path(f).name for f in image_files}
     label_stems = {Path(f).name for f in label_files}
@@ -161,9 +161,24 @@ def check_files_exist(
     trash_folder:Path = Path("Trash"),
     deleted_automaticly: bool = False,
 ) -> bool:
-    """Validate image/label pairs and prompt user to resolve mismatches before training."""
 
-    images_path = get_images_names(input_dir)
+    """
+        Validate that every image in `input_dir` has a matching label file in `text_dir`
+        (and vice versa). Mismatched files are moved to `trash_folder`.
+
+        Args:
+            input_dir: Directory containing image files.
+            text_dir: Directory containing label (.txt) files.
+            trash_folder: Where unmatched files get moved to.
+            deleted_automaticly: If True, move mismatches without asking.
+                                    If False, prompt the user for confirmation.
+
+       Returns:
+               True if any labels and pictures exist to start the training.
+               False if no labels or pictures exist for training.
+    """
+
+    images_path:set[Path] = get_images_names(input_dir)
     print(images_path)
     print(input_dir)
     text_path = get_text_files_names(text_dir)
@@ -176,13 +191,13 @@ def check_files_exist(
         if not deleted_automaticly:
             if _prompt_action(len(single_images), "image") == "r":
                 move_to_trash_folder(single_images, trash_folder, "image")
-                images_path = [f for f in images_path if f not in single_images]
+                images_path = set([f for f in images_path if f not in single_images])
         else:
             move_to_trash_folder(single_images, trash_folder, "image")
-            images_path = [f for f in images_path if f not in single_images]
+            images_path = set([f for f in images_path if f not in single_images])
 
     # Check labels missing images
-    single_labels = labels_have_images(list(images_path), text_path, text_dir)
+    single_labels = labels_have_images(images_path, text_path, text_dir)
     if single_labels:
         if not deleted_automaticly:
             if _prompt_action(len(single_labels), "label") == "r":
