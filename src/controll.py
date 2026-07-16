@@ -164,7 +164,7 @@ def check_files_exist(
 
     """
         Validate that every image in `input_dir` has a matching label file in `text_dir`
-        (and vice versa). Mismatched files are moved to `trash_folder`.
+        (and vice versa). When mismatched files are found, the system prompts you to either skip, trash, or stop the operation.
 
         Args:
             input_dir: Directory containing image files.
@@ -179,9 +179,9 @@ def check_files_exist(
     """
 
     images_path:set[Path] = get_images_names(input_dir)
-    print(images_path)
-    print(input_dir)
+    print(f"images: {images_path}")
     text_path = get_text_files_names(text_dir)
+    print(f"texts: {text_path}")
     if not check_if_images_labels_exits(input_dir,text_dir):
         return False
 

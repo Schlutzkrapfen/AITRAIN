@@ -36,7 +36,7 @@ def get_label_path(directory: Path) -> set[Path]:
 
 
 def get_images_names(directory: Path) -> set[Path]:
-    """Finds all image file paths in a directory.
+    """Extracts the base names (without extensions) of all Images files in a directory.
 
         Filters for files ending in common image extensions (.png, .jpg, .jpeg).
 
@@ -46,8 +46,12 @@ def get_images_names(directory: Path) -> set[Path]:
         Returns:
             A set of Path objects for all matching image files.
         """
-    return {f for f in directory.iterdir() if f.suffix.lower() in IMAGE_EXTENSIONS}
 
+    test:set[Path] = set()
+    for f in directory.iterdir():
+        if f.suffix.lower() in IMAGE_EXTENSIONS:
+            test.add(Path(f.name[: -len(f.suffix)]))
+    return test
 
 
 def get_text_files_names(directory: Path) -> set[Path]:
