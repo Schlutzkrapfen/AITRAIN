@@ -144,8 +144,13 @@ def write_yaml(names:dict[int,str], path:str= "data.yaml"):
 
 
 def remove_labels():
+    """Interactively prompts the user to delete specific labels from the dataset.
+
+        Loads current labels, asks the user for the names or IDs of the labels to
+        remove, and updates both the label text files (train/val) and the configuration YAML.
+        """
     labels: dict[str, int] = _load_name_to_id()
-    print(labels)
+    print(f"Attention the labels  are order first the Name than the ID \n{labels}")
     number: list[int] = get_input(
         labels,
         "Which label do you want to delete (name(s) or number(s), or 'done') with ',' split the numbers or names : ",
