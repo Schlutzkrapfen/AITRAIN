@@ -115,7 +115,7 @@ def modify_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
         shift = sum(1 for num in targets if num < key)
         updated_lines[key - shift] = value
 
-    write_yaml(updated_lines, path)
+    write_yaml(updated_lines,len(targets), path)
 
 
 def remove_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
@@ -129,15 +129,16 @@ def remove_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
 
         shift = sum(1 for num in targets if num < key)
         updated_lines[key - shift] = value
-    write_yaml(updated_lines, path)
+    write_yaml(updated_lines,len(targets) ,path)
 
 
 
-def write_yaml(names:dict[int,str], path:str= "data.yaml"):
+def write_yaml(names:dict[int,str],target_amount:int ,path:str= "data.yaml"):
     with open(path, "r") as f:
         data = yaml.safe_load(f) or {}
 
     data["names"] = names
+    data["nc"] = int(data["nc"])-target_amount
 
     with open(path, "w") as f:
         yaml.safe_dump(data, f, default_flow_style=False)
