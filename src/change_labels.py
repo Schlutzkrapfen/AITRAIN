@@ -150,7 +150,7 @@ def remove_labels():
         remove, and updates both the label text files (train/val) and the configuration YAML.
         """
     labels: dict[str, int] = _load_name_to_id()
-    print(f"Attention the labels  are order first the Name than the ID \n{labels}")
+    print(f"Attention the labels are order first the Name than the ID \n{labels}")
     number: list[int] = get_input(
         labels,
         "Which label do you want to delete (name(s) or number(s), or 'done') with ',' split the numbers or names : ",
