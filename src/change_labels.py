@@ -234,5 +234,6 @@ def modify_labels():
         return
     paths: set[Path] = get_label_path(Path("labels/train"))
     paths.update(get_label_path(Path("labels/val")))
+    modify_numbers_from_yaml(number)
 
     remove_numbers_from_yaml(number[1:])
