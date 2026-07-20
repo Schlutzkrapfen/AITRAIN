@@ -68,6 +68,33 @@ def get_input(labels: dict[str, int], input_text: str,needs_two:bool= False) -> 
         except ValueError as e:
             print(f"{e} try again")
 
+def modify_nubers_from_labels(numbers:list[int],paths:set[Path]):
+    target = numbers[0]
+    for number in numbers[1:]:
+           for path in paths:
+               with open(path, "r") as f:
+                   lines = f.readlines()
+
+               updated_lines: list[str] = []
+               for line in lines:
+                   line = line.strip()
+                   if not line:
+                       continue
+                   parts: list[str] = line.split()
+                   class_id: int = int(parts[0])
+
+                   if class_id < number:
+                       updated_lines.append(line)
+                   elif class_id == number:
+                       parts[0] = str(target)
+                       updated_lines.append(" ".join(lines[0][0]))
+                   else:
+                       parts[0] = str(class_id - 1)
+                       updated_lines.append(" ".join(parts))
+
+               with open(path, "w") as f:
+                   _written = f.write("\n".join(updated_lines) + "\n" if updated_lines else "")
+                   print(f"Updated labels in {path}")
 
 def remove_numbers_from_labes(numbers: list[int], paths: set[Path]):
     for number in numbers:
@@ -222,6 +249,17 @@ def remove_labels():
     remove_numbers_from_yaml(number)
 
 def modify_labels():
+    """
+    Interactively merge two or more labels into one.
+
+    Prompts the user for labels to merge (first entry is the target,
+    others get merged into it). If the user enters 'done' ([-1]),
+    the merge is skipped.
+
+    Otherwise, collects label files under "labels/train" and
+    "labels/val", remaps merged labels via modify_numbers_from_yaml(),
+    then removes the now-unused indices via remove_numbers_from_yaml().
+    """
     labels: dict[str, int] = _load_name_to_id()
     print(labels)
     number: list[int] = get_input(
@@ -234,6 +272,5 @@ def modify_labels():
         return
     paths: set[Path] = get_label_path(Path("labels/train"))
     paths.update(get_label_path(Path("labels/val")))
-    modify_numbers_from_yaml(number)
 
     remove_numbers_from_yaml(number[1:])
