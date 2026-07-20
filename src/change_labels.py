@@ -12,6 +12,15 @@ How you want to change labels:
 
 
 def change_labels():
+    """
+        Show a menu for editing labels and loop until the user exits.
+
+        Options:
+            "0" -> remove_labels() : delete label(s)
+            "1" -> modify_labels() : merge label(s)
+            "2" -> return          : exit the menu
+            other -> print an error and re-prompt
+        """
     while True:
         answer = input(TRAIN_MENU).strip()
         match answer:
@@ -88,7 +97,19 @@ def remove_numbers_from_labes(numbers: list[int], paths: set[Path]):
                 print(f"Updated labels in {path}")
 
 def load_names(path: str = "data.yaml") -> dict[int,str]:
-    """Read only the names dict from the yaml file."""
+    """
+        Read only the "names" dict from the YAML file.
+
+        Args:
+            path: Path to the YAML file. Defaults to "data.yaml".
+
+        Returns:
+            The names in dict[int, str] format.
+
+        Note:
+            Expects the YAML file to have a "names" key in
+            dict[int, str] format.
+        """
     with open(path, "r") as f:
         data = yaml.safe_load(f)
 
@@ -119,6 +140,26 @@ def modify_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
 
 
 def remove_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
+    """
+        Remove the given class indices from a YAML label file and
+        re-index the remaining classes so numbering stays contiguous.
+
+        Loads the "names" mapping from `path`, deletes the entries whose
+        keys are in `numbers`, then shifts each remaining key down by the
+        number of removed keys smaller than it (so indices stay
+        consecutive with no gaps). The result is written back via
+        write_yaml(), which also decreases "nc" by the number of removed
+        classes.
+
+        Args:
+            numbers: List of class indices to remove.
+            path: Path to the YAML file. Defaults to "data.yaml".
+
+        Note:
+            Removed keys are not renumbered/kept; they are dropped
+            entirely, and all keys above a removed one shift down by 1
+            for each smaller removed key.
+        """
     names:dict[int,str] =  load_names(path)
     updated_lines:dict[int,str] = {}
     targets = sorted(numbers)
@@ -134,6 +175,22 @@ def remove_numbers_from_yaml(numbers: list[int], path: str = "data.yaml"):
 
 
 def write_yaml(names:dict[int,str],target_amount:int ,path:str= "data.yaml"):
+    """
+       Write an updated "names" mapping to a YAML file and adjust "nc".
+
+       Reads the existing YAML file at `path`, replaces its "names" key
+       with `names`, decreases "nc" (class count) by `target_amount`,
+       and overwrites the file with the updated data.
+
+       Args:
+           names: New mapping of class index -> class name to store.
+           target_amount: Number to subtract from the existing "nc" value.
+           path: Path to the YAML file. Defaults to "data.yaml".
+
+       Note:
+           Assumes the YAML file already contains an "nc" key that can
+           be converted to int.
+       """
     with open(path, "r") as f:
         data = yaml.safe_load(f) or {}
 
