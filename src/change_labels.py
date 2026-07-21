@@ -36,6 +36,21 @@ def change_labels():
 
 
 def get_input(labels: dict[str, int], input_text: str,needs_two:bool= False) -> list[int]:
+    """Prompts the user for label names/IDs and returns their IDs.
+
+       Repeatedly prompts with `input_text` until valid input is given. Accepts
+       a comma-separated list of label names, numeric IDs, or "done" to exit
+       early. Invalid entries print an error and re-prompt the user.
+
+       Args:
+           labels (dict[str, int]): Mapping of label names to IDs.
+           input_text (str): Prompt text shown to the user.
+           needs_two (bool, optional): If True, requires at least two unique
+               IDs. Defaults to False.
+
+       Returns:
+           list[int]: Unique label IDs entered, or `[-1]` if "done" was entered.
+       """
     while True:
         answers = input(input_text).strip().split(",")
         numbers: list[int] = []
@@ -69,7 +84,8 @@ def get_input(labels: dict[str, int], input_text: str,needs_two:bool= False) -> 
             print(f"{e} try again")
 
 def modify_nubers_from_labels(numbers:list[int],paths:set[Path]):
-    """Reassigns one or more class labels to a target label across label files.
+    """
+    Reassigns one or more class labels to a target label across label files.
 
        Takes the first element of `numbers` as the target class ID. For every
        other number in the list (processed in descending order), it rewrites
@@ -84,10 +100,7 @@ def modify_nubers_from_labels(numbers:list[int],paths:set[Path]):
            paths (set[Path]): A set of file paths to label files, where each
                line starts with an integer class ID followed by other
                space-separated values.
-
-       Returns:
-           None: This function modifies the label files in place and prints a
-           confirmation message for each file updated."""
+    """
 
     target = numbers[0]
     numbers = sorted(numbers[1:], reverse=True)
@@ -118,6 +131,20 @@ def modify_nubers_from_labels(numbers:list[int],paths:set[Path]):
                    print(f"Updated labels in {path}")
 
 def remove_numbers_from_labes(numbers: list[int], paths: set[Path]):
+    """Removes one or more class labels from label files.
+
+        For each path, iterates over the given class IDs in descending order
+        and removes any line whose class ID matches. Class IDs greater than
+        the removed ID are decremented by 1 to keep the remaining IDs
+        contiguous.
+
+        Args:
+            numbers (list[int]): A list of class IDs to remove from the label
+                files.
+            paths (set[Path]): A set of file paths to label files, where each
+                line starts with an integer class ID followed by other
+                space-separated values.
+    """
     numbers = sorted(numbers, reverse=True)
     for path in paths:
         for number in numbers:
