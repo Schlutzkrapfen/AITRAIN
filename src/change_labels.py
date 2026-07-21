@@ -69,8 +69,29 @@ def get_input(labels: dict[str, int], input_text: str,needs_two:bool= False) -> 
             print(f"{e} try again")
 
 def modify_nubers_from_labels(numbers:list[int],paths:set[Path]):
+    """Reassigns one or more class labels to a target label across label files.
+
+       Takes the first element of `numbers` as the target class ID. For every
+       other number in the list (processed in descending order), it rewrites
+       matching class IDs to the target value in each label file, and
+       decrements any class ID greater than the current number by 1 to keep
+       IDs contiguous after the merge.
+
+       Args:
+           numbers (list[int]): A list of class IDs. The first element is the
+               target ID that subsequent IDs will be merged into. The
+               remaining elements are the IDs to be replaced.
+           paths (set[Path]): A set of file paths to label files, where each
+               line starts with an integer class ID followed by other
+               space-separated values.
+
+       Returns:
+           None: This function modifies the label files in place and prints a
+           confirmation message for each file updated."""
+
     target = numbers[0]
-    for number in numbers[1:]:
+    numbers = sorted(numbers[1:], reverse=True)
+    for number in numbers:
            for path in paths:
                with open(path, "r") as f:
                    lines = f.readlines()
@@ -97,8 +118,9 @@ def modify_nubers_from_labels(numbers:list[int],paths:set[Path]):
                    print(f"Updated labels in {path}")
 
 def remove_numbers_from_labes(numbers: list[int], paths: set[Path]):
-    for number in numbers:
-        for path in paths:
+    numbers = sorted(numbers, reverse=True)
+    for path in paths:
+        for number in numbers:
             with open(path, "r") as f:
                 lines = f.readlines()
 
