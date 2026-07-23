@@ -121,7 +121,7 @@ def modify_nubers_from_labels(numbers:list[int],paths:set[Path]):
                        updated_lines.append(line)
                    elif class_id == number:
                        parts[0] = str(target)
-                       updated_lines.append(" ".join(lines[0][0]))
+                       updated_lines.append(" ".join(parts))
                    else:
                        parts[0] = str(class_id - 1)
                        updated_lines.append(" ".join(parts))
