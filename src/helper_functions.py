@@ -151,6 +151,6 @@ def _load_name_to_id(yaml_path: str = "data.yaml") -> dict[str, int]:
     return {v: k for k, v in data["names"].items()}
 
 
-def sanitize_folder_name(name: str):
+def sanitize_folder_name(name: str)->str:
     """Replace / and other invalid path characters with an underscore"""
     return re.sub(r'[<>:"/\\|?*]', "_", name)

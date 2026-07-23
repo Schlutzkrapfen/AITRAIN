@@ -74,7 +74,7 @@ def get_input(labels: dict[str, int], input_text: str,needs_two:bool= False) -> 
                     numbers.append(number)
                 else:
                     raise ValueError(f"Not a valid name or number: {answer}")
-            numbers =  list(set(numbers))
+            numbers =   list(dict.fromkeys(numbers))
 
             if needs_two and len(numbers) <= 1:
                 raise ValueError("Needs more than one number")
@@ -129,6 +129,7 @@ def modify_nubers_from_labels(numbers:list[int],paths:set[Path]):
                with open(path, "w") as f:
                    _written = f.write("\n".join(updated_lines) + "\n" if updated_lines else "")
                    print(f"Updated labels in {path}")
+
 
 def remove_numbers_from_labes(numbers: list[int], paths: set[Path]):
     """Removes one or more class labels from label files.
@@ -319,6 +320,7 @@ def modify_labels():
     if number == [-1]:
         print("skipped")
         return
+    print(number)
     paths: set[Path] = get_label_path(Path("labels/train"))
     paths.update(get_label_path(Path("labels/val")))
     modify_nubers_from_labels(number,paths)
