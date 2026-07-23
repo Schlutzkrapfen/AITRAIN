@@ -105,30 +105,33 @@ def modify_nubers_from_labels(numbers:list[int],paths:set[Path]):
     target = numbers[0]
     numbers = sorted(numbers[1:], reverse=True)
     for number in numbers:
+           if target > number:
+                target -=1
            for path in paths:
                with open(path, "r") as f:
                    lines = f.readlines()
 
                updated_lines: list[str] = []
                for line in lines:
-                   line = line.strip()
-                   if not line:
+                    line = line.strip()
+                    if not line:
                        continue
-                   parts: list[str] = line.split()
-                   class_id: int = int(parts[0])
+                    parts: list[str] = line.split()
+                    class_id: int = int(parts[0])
 
-                   if class_id < number:
+                    if class_id < number:
                        updated_lines.append(line)
-                   elif class_id == number:
+                    elif class_id == number:
                        parts[0] = str(target)
                        updated_lines.append(" ".join(parts))
-                   else:
+                    else:
                        parts[0] = str(class_id - 1)
                        updated_lines.append(" ".join(parts))
 
                with open(path, "w") as f:
                    _written = f.write("\n".join(updated_lines) + "\n" if updated_lines else "")
                    print(f"Updated labels in {path}")
+
 
 
 def remove_numbers_from_labes(numbers: list[int], paths: set[Path]):
