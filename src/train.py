@@ -1,12 +1,16 @@
 import csv
 import json
 import os
+from pathlib import Path
 from datetime import datetime
 
+from numpy import mod
 import optuna
 from ultralytics import YOLO
 
 YOLO_MODEL_FINAL = "yolov8x.pt"
+YOLO_TEST_MODEL = "yolov8n"
+YOLO_MODEL_FOR_HYPERTUNING = "yolov8x.pt"
 EPOCHS_FINAL = 400
 yaml_path = "data.yaml"
 
@@ -49,7 +53,6 @@ DEFAULT_BEST: dict[str,float] = {
 
 
 def train_with_imporfment():
-    YOLO_MODEL = "yolov8x.pt"
     TRIALS = 100
     EPOCHS_SEARCH = 150
 
@@ -86,7 +89,7 @@ def train_with_imporfment():
 
     def objective(trial):
         start_time = datetime.now()
-        model = YOLO(YOLO_MODEL)
+        model = YOLO(YOLO_MODEL_FOR_HYPERTUNING)
 
         # Suggest hyperparameters for this trial
         params = dict(
@@ -223,18 +226,27 @@ def train_with_imporfment():
     print(f"📋 Full summary saved to: {SUMMARY_FILE}")
 
 
-def train(best=None, yaml_path="data.yaml"):
+def train(best=None, yaml_path:Path=Path("data.yaml"),test_run:bool = False):
+    """Trains the final YOLO model using the best hyperparameters found.
+
+        Loads a fresh YOLO model instance and trains it on the given dataset,
+        combining fixed training parameters with the best hyperparameters.
+        Augmentations (HSV, flip, cutmix) are disabled for consistency.
+
+        Args:
+            best (dict, optional): Best hyperparameters to pass to training.
+                Defaults to a copy of DEFAULT_BEST if None.
+            yaml_path (Path, optional): Path to the dataset YAML file.
+                Defaults to Path("data.yaml").
+                test_run (bool, optional): Makes the test run extremely lightweight and not use the graphics card, so that it runs everywhere
+        """
     if best is None:
         best = DEFAULT_BEST.copy()
     # Fresh instance required here too — same reason as inside objective()
-    model = YOLO(YOLO_MODEL_FINAL)
-    model.train(
+
+    model = YOLO(YOLO_TEST_MODEL if test_run else YOLO_MODEL_FINAL)
+    train_kwargs = dict(
         data=yaml_path,
-        epochs=EPOCHS_FINAL,
-        patience=100,
-        batch=6,
-        save_period=20,
-        imgsz=1280,
         **best,
         hsv_h=0.0,
         hsv_s=0.0,
@@ -243,3 +255,22 @@ def train(best=None, yaml_path="data.yaml"):
         auto_augment=False,
         optimizer="AdamW",
     )
+
+    if test_run:
+        train_kwargs.update(
+            epochs=10,
+            patience=10,
+            batch=1,
+            imgsz=128,
+            device="cpu",
+        )
+    else:
+        train_kwargs.update(
+            epochs=EPOCHS_FINAL,
+            patience=100,
+            batch=6,
+            save_period=20,
+            imgsz=1280,
+        )
+
+    model.train(**train_kwargs)
