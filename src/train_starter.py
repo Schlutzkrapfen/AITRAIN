@@ -3,12 +3,13 @@ from train import train,train_with_imporfment
 
 from single_label_train import train_on_each_label,train_on_single_label
 TRAIN_MENU = """
-What do you want to train:
+What do you want to train (add "t" after the number, e.g. "0t", to run a
+quick test faster, lighter, and doesn't need a GPU):
     0 - Single Run
     1 - Hypertune the Run
-    2 - Every Label and splitt up the folder
+    2 - Every Label and split up the folder
     3 - A Single Label
-    4 - Done(Return)
+    4 - Done (Return)
 
 """
 def start_train():
