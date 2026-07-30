@@ -85,7 +85,18 @@ def move_to_trash_folder(paths:list[Path], trash_folder: Path, name: str = "file
 
 
 def get_label_from_ordered(path_to_labels: Path) -> list[Path]:
-    """Returns all Labels that are alrady in a val and Train folder from the path_to_labels they are sorted"""
+    """Collects all label files from the val and train subfolders.
+
+        Combines label files found in the "val" and "train" subdirectories
+        of the given path into a single deduplicated, sorted list.
+
+        Args:
+            path_to_labels (Path): Path to the parent directory containing
+                the "val" and "train" subfolders.
+
+        Returns:
+            list[Path]: Sorted list of label file paths from both folders.
+        """
     labels_set = get_label_path(path_to_labels / "val").union(
         get_label_path(path_to_labels / "train")
     )
@@ -94,7 +105,18 @@ def get_label_from_ordered(path_to_labels: Path) -> list[Path]:
 
 
 def get_images_from_ordered(path_to_pictures: Path) -> list[Path]:
-    """Returns all images that are alrady in a val and Train folder from the path_to_pictures they are sorted"""
+    """Collects all image files from the val and train subfolders.
+
+        Combines image files found in the "val" and "train" subdirectories
+        of the given path into a single deduplicated, sorted list.
+
+        Args:
+            path_to_pictures (Path): Path to the parent directory containing
+                the "val" and "train" subfolders.
+
+        Returns:
+            list[Path]: Sorted list of image file paths from both folders.
+        """
     images_set = get_images_path(path_to_pictures / "val").union(
         get_images_path(path_to_pictures / "train")
     )
@@ -140,17 +162,50 @@ def get_classnames(labels:list[Path], yaml_path: str) -> list[str]:
 
 
 def change_yaml_to_id_output(text: str, yaml_path: str = "data.yaml") -> int:
-    """Converts a class name string to its integer ID from a YAML config."""
+    """Converts a class name to its corresponding integer ID.
+
+        Looks up the given class name in the YAML config's name-to-ID
+        mapping.
+
+        Args:
+            text (str): Class name to look up.
+            yaml_path (str, optional): Path to the YAML config file.
+                Defaults to "data.yaml".
+
+        Returns:
+            int: The integer ID for the class name, or -1 if not found.
+        """
     return _load_name_to_id(yaml_path).get(text, -1)
 
 
 def _load_name_to_id(yaml_path: str = "data.yaml") -> dict[str, int]:
-    """loads every label out of the yaml file"""
+    """Loads the class names from a YAML config as a name-to-ID mapping.
+
+        Reads the "names" section of the YAML file (normally a mapping of
+        ID to name) and inverts it into a name-to-ID mapping.
+
+        Args:
+            yaml_path (str, optional): Path to the YAML config file.
+                Defaults to "data.yaml".
+
+        Returns:
+            dict[str, int]: Mapping of class name to its integer ID.
+        """
     with open(yaml_path, "r") as f:
         data = yaml.safe_load(f)
     return {v: k for k, v in data["names"].items()}
 
 
 def sanitize_folder_name(name: str)->str:
-    """Replace / and other invalid path characters with an underscore"""
+    """Sanitizes a string for safe use as a folder name.
+
+        Replaces characters that are invalid in file/folder names
+        ( / \\ : * ? " < > |) with an underscore.
+
+        Args:
+            name (str): The folder name to sanitize.
+
+        Returns:
+            str: The sanitized folder name.
+        """
     return re.sub(r'[<>:"/\\|?*]', "_", name)

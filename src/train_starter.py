@@ -12,7 +12,14 @@ What do you want to train:
 
 """
 def start_train():
-    """small script for controlling what you want to train"""
+    """Displays a menu for selecting a training mode and runs it.
+
+        Prompts the user to choose between a single training run,
+        hyperparameter tuning, training on every label with folder
+        splitting, or training on a single label. Repeats until a
+        valid option is selected and executed, or the user chooses
+        to exit.
+        """
     while True:
         print("War: Training is in Devolpment is not finished")
         answer_train = input(TRAIN_MENU).strip()
@@ -26,6 +33,7 @@ def start_train():
             case "3":
                 train_on_single_label()
             case "4":
+                print("Exiting")
                 break
             case _:
                 print("Error: not a valid input")

@@ -61,7 +61,7 @@ def get_input(default_path: str = "single_label_runs") -> str:
 def train_on_single_label():
     path = get_input()
     try:
-        train(None, str(path))
+        train(None, Path(path))
     except Exception as e:
         print(f"Error:{e}")
 
@@ -87,7 +87,7 @@ def train_on_each_label():
         ):
             continue
         try:
-            train(None, str(path))
+            train(None, Path(path))
         except Exception as e:
             print(f"this broke bacause: {e}")
             continue

@@ -54,7 +54,22 @@ def check_if_labels_empty(labels_path:list[Path])->list[Path]:
 
 
 def labels_have_images(image_files:set[Path], label_files:set[Path], text_dir:Path)->list[Path]:
-    """Check that every image in the directory has a corresponding .txt label file."""
+    """Checks that every label file has a corresponding image file.
+
+        Compares the filenames (stems) of label files against image files
+        to find labels that don't have a matching image. Prints a message
+        for each missing image, or a confirmation if none are missing.
+
+        Args:
+            image_files (set[Path]): Set of image file paths.
+            label_files (set[Path]): Set of label (.txt) file paths.
+            text_dir (Path): Directory where the label files are located,
+                used to build the returned paths.
+
+        Returns:
+            list[Path]: Paths to label files that have no matching image,
+                based on their filename stem.
+        """
     image_stems = {Path(f).name for f in image_files}
     label_stems = {Path(f).name for f in label_files}
     unlabeled = label_stems - image_stems
