@@ -1,12 +1,13 @@
 
-from train import train
+from train import train,train_with_imporfment
 
-from single_label_train import train_on_each_label,train_on_single_label
+from single_label_train import train_on_each_label,train_on_single_label,
 TRAIN_MENU = """
 What do you want to train:
     0 - Single Run
-    1 - Every Label and splitt up the folder
-    2 - A Single Label
+    1 - Hypertune the Run
+    2 - Every Label and splitt up the folder
+    3 - A Single Label
 
 """
 def start_train():
@@ -18,8 +19,10 @@ def start_train():
             case "0":
                 train()
             case "1":
-                train_on_each_label()
+                train_with_imporfment()
             case "2":
+                train_on_each_label()
+            case "3":
                 train_on_single_label()
             case _:
                 print("Error: not a valid input")
