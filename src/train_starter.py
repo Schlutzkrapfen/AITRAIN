@@ -1,7 +1,7 @@
 
 from train import train,train_with_imporfment
 
-from single_label_train import train_on_each_label,train_on_single_label,
+from single_label_train import train_on_each_label,train_on_single_label
 TRAIN_MENU = """
 What do you want to train:
     0 - Single Run
