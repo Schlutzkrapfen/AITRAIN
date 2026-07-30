@@ -8,6 +8,7 @@ What do you want to train:
     1 - Hypertune the Run
     2 - Every Label and splitt up the folder
     3 - A Single Label
+    4 - Done(Return)
 
 """
 def start_train():
@@ -24,6 +25,8 @@ def start_train():
                 train_on_each_label()
             case "3":
                 train_on_single_label()
+            case "4":
+                break
             case _:
                 print("Error: not a valid input")
                 continue

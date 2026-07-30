@@ -50,8 +50,8 @@ DEFAULT_BEST: dict[str,float] = {
 
 def train_with_imporfment():
     YOLO_MODEL = "yolov8x.pt"
-    TRIALS = 300
-    EPOCHS_SEARCH = 300
+    TRIALS = 100
+    EPOCHS_SEARCH = 150
 
     # ── Log file setup ────────────────────────────────────────────────────────────
     LOG_FILE = "trials_log.csv"
@@ -109,7 +109,7 @@ def train_with_imporfment():
             epochs=EPOCHS_SEARCH,
             imgsz=1280,
             batch=6,
-            patience=50,
+            patience=20,
             verbose=False,
             # Fixed params — not part of the search
             hsv_h=0.0,
