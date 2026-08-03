@@ -17,7 +17,24 @@ script_directory = Path(sys.argv[0]).resolve().parent
 
 
 def images_have_labels(image_files:set[Path], label_files:set[Path], input_dir:Path)-> list[Path]:
-    """Check that every image in the directory has a corresponding .txt label file."""
+    """Checks that every image file has a corresponding label file.
+
+        Compares the filenames (stems) of image files against label files
+        to find images that don't have a matching .txt label. For each
+        missing label, attempts to locate the actual image file on disk
+        by trying each extension in IMAGE_EXTENSIONS. Prints a message
+        for each missing label, or a confirmation if none are missing.
+
+        Args:
+            image_files (set[Path]): Set of image file paths.
+            label_files (set[Path]): Set of label (.txt) file paths.
+            input_dir (Path): Directory to search for the actual image
+                files corresponding to missing labels.
+
+        Returns:
+            list[Path]: Paths to image files that have no matching label
+                file.
+        """
 
     image_stems = {Path(f).name for f in image_files}
     label_stems = {Path(f).name for f in label_files}
@@ -43,6 +60,19 @@ def images_have_labels(image_files:set[Path], label_files:set[Path], input_dir:P
 
 
 def check_if_labels_empty(labels_path:list[Path])->list[Path]:
+    """Checks a list of label files and identifies which ones are empty.
+
+        Iterates over the given paths, checking each file's size on disk.
+        Files with a size of zero bytes are considered empty and collected
+        into a list. A summary of the count and a preview of up to 10 empty
+        file paths are printed to stdout.
+
+        Args:
+            labels_path (list[Path]): A list of paths to label files to check.
+
+        Returns:
+            list[Path]: A list containing the paths of all label files that
+                are empty (i.e., have a size of 0 bytes)."""
     empty:list[Path] = []
     for labels in labels_path:
         if os.path.getsize(labels) == 0:
@@ -84,7 +114,24 @@ def labels_have_images(image_files:set[Path], label_files:set[Path], text_dir:Pa
 
 
 def chec_val_and_train_dublicates(images_path:Path, val_path:Path):
-    """Checks if any labels are in train and Label class"""
+    """Checks for filename overlaps between training and validation directories.
+
+        Lists the filenames present in both the training and validation
+        directories and computes their intersection to detect duplicate
+        files that may have leaked between the two sets. The number of
+        overlapping filenames is printed to stdout.
+
+        Args:
+            images_path (Path): Path to the directory containing training
+                images (or labels).
+            val_path (Path): Path to the directory containing validation
+                images (or labels).
+
+        Note:
+             This function does not return a value; it only prints
+                the count of overlapping filenames found between the two
+                directories.
+    """
     train_files = set(os.listdir(images_path))
     val_files = set(os.listdir(val_path))
 
@@ -93,7 +140,26 @@ def chec_val_and_train_dublicates(images_path:Path, val_path:Path):
 
 
 def _prompt_action(count: int, item_type: str, reason_type: str = "orphaned") -> str:
-    """Ask user how to handle orphaned files. Returns 'r'(remove), 'y'(continue), or exits."""
+    """
+       Prompt the user to decide how to handle a set of flagged files.
+
+       Displays the count and type of affected items, then repeatedly asks for
+       input until a valid choice is entered. Choosing to stop exits the program
+       immediately rather than returning to the caller.
+
+       Args:
+           count: Number of affected items found.
+           item_type: Description of the item type (e.g. "image", "label"),
+                      used in the prompt message.
+           reason_type: Why the items were flagged (e.g. "orphaned",
+                        "duplicate"). Defaults to "orphaned".
+
+       Returns:
+           'r' to remove the items, or 'y' to continue without removing them.
+
+       Exits:
+           The program exits with status 0 if the user chooses to stop ('n').
+       """
     while True:
         choice = (
             input(
@@ -110,7 +176,19 @@ def _prompt_action(count: int, item_type: str, reason_type: str = "orphaned") ->
 
 
 def check_if_images_labels_exits(images_path:Path, text_path:Path) -> bool:
-    """checks if any labels or images exist"""
+    """
+       Check whether both the images folder and the labels folder contain files.
+
+       Prints a message identifying which folder is empty (if any).
+
+       Args:
+           images_path: Path to the folder expected to contain image files.
+           text_path: Path to the folder expected to contain label (text) files.
+
+       Returns:
+           True if both folders contain at least one file, False if either is
+           empty.
+       """
     if not any(images_path.iterdir()):
         print("No images in folder")
         return False
@@ -162,7 +240,19 @@ def check_if_duplicates_exist(images_path: Path, delete_automatic: bool = False)
 
 
 def hash_file(filepath:Path, chunk_size:int=8192):
-    """Returns an MD5 hash of the file's contents."""
+    """
+        Compute the MD5 hash of a file's contents.
+
+        Reads the file in fixed-size chunks rather than loading it entirely into
+        memory, making this safe to use on large files.
+
+        Args:
+            filepath: Path to the file to hash.
+            chunk_size: Number of bytes to read per chunk. Defaults to 8192.
+
+        Returns:
+            The hexadecimal string representation of the file's MD5 hash.
+        """
     hasher = hashlib.md5()
     with open(filepath, "rb") as f:
         while chunk := f.read(chunk_size):

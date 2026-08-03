@@ -226,7 +226,7 @@ def train_with_imporfment():
     print(f"📋 Full summary saved to: {SUMMARY_FILE}")
 
 
-def train(best=None, yaml_path:Path=Path("data.yaml"),test_run:bool = False):
+def train(best=None, yaml_path:Path=Path("data.yaml"),test_run:bool = False,no_gpu:bool = False):
     """Trains the final YOLO model using the best hyperparameters found.
 
         Loads a fresh YOLO model instance and trains it on the given dataset,
@@ -238,7 +238,11 @@ def train(best=None, yaml_path:Path=Path("data.yaml"),test_run:bool = False):
                 Defaults to a copy of DEFAULT_BEST if None.
             yaml_path (Path, optional): Path to the dataset YAML file.
                 Defaults to Path("data.yaml").
-                test_run (bool, optional): Makes the test run extremely lightweight and not use the graphics card, so that it runs everywhere
+                test_run (bool, optional): If True, runs a lightweight test configuration
+                    (small model, fewer epochs, small image size) so it can run quickly
+                    on any machine. Defaults to False.
+                no_gpu (bool, optional): If True, forces training on CPU instead of GPU.
+                    Defaults to False.
         """
     if best is None:
         best = DEFAULT_BEST.copy()
@@ -258,11 +262,10 @@ def train(best=None, yaml_path:Path=Path("data.yaml"),test_run:bool = False):
 
     if test_run:
         train_kwargs.update(
-            epochs=10,
-            patience=10,
-            batch=1,
-            imgsz=128,
-            device="cpu",
+            epochs=100,
+            patience=0,
+            batch=4,
+            imgsz=256,
         )
     else:
         train_kwargs.update(
@@ -271,6 +274,10 @@ def train(best=None, yaml_path:Path=Path("data.yaml"),test_run:bool = False):
             batch=6,
             save_period=20,
             imgsz=1280,
+        )
+    if no_gpu:
+        train_kwargs.update(
+             device="cpu"
         )
 
     model.train(**train_kwargs)

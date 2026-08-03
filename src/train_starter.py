@@ -4,7 +4,7 @@ from train import train,train_with_imporfment
 from single_label_train import train_on_each_label,train_on_single_label
 TRAIN_MENU = """
 What do you want to train (add "t" after the number, e.g. "0t", to run a
-quick test faster, lighter, and doesn't need a GPU):
+quick test: faster, lighter, and a "n" if you don't need a GPU):
     0 - Single Run
     1 - Hypertune the Run
     2 - Every Label and split up the folder
@@ -24,15 +24,24 @@ def start_train():
     while True:
         print("War: Training is in Devolpment is not finished")
         answer_train = input(TRAIN_MENU).strip()
-        match answer_train:
+        choice = answer_train
+        flags = ""
+        while choice and choice[-1] in "tn":
+            flags += choice[-1]
+            choice = choice[:-1]
+
+        test_run = "t" in flags
+        no_gpu = "n" in flags
+
+        match choice:
             case "0":
-                train()
+                train(test_run=test_run,no_gpu=no_gpu)
             case "1":
                 train_with_imporfment()
             case "2":
-                train_on_each_label()
+                train_on_each_label(test_run=test_run)
             case "3":
-                train_on_single_label()
+                train_on_single_label(test_run=test_run)
             case "4":
                 print("Exiting")
                 break
