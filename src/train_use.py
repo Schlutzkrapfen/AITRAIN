@@ -10,7 +10,11 @@ RESULT_FOLDER: Path = Path("./result")
 AI_FOLDER: Path = Path("./runs/detect")
 AI_POSITION:Path = Path("./weights")
 AI_GET_TEXT = """Which Ai Modell do you want (write done if you want to break): """
-
+MENU ="""What do you want to do:
+0: Use a test folder end add boxes
+1: Make a Picture for each label the Ai finds. (This makes more sense when the Modell hasen't had the same labels as they are now )
+2: Done
+    """
 def get_correct_cls(names: dict, cls: int, classes_txt: Path) -> int:
     """
         Find the line number of a class name in a classes.txt file.
@@ -71,12 +75,10 @@ def try_ai(yolo_model: YOLO, input: Path, output_folder: Path =Path("./Results")
 
 def find_Model(answer: str) -> YOLO:
     folder = AI_FOLDER / answer
-    yolo_models_found: list[Path] = []
     if not folder.exists() or not folder.is_dir():
         raise ValueError("No folder found with this name")
 
-    for model_file in folder.rglob("*.pt"):
-        yolo_models_found.append(model_file)
+    yolo_models_found: list[Path] = list(folder.rglob("*.pt"))
 
     if len(yolo_models_found) <= 0:
         raise ValueError("No YOLO file found in folder")
@@ -101,14 +103,6 @@ def find_Model(answer: str) -> YOLO:
         return YOLO(yolo_models_found[number])
 
 
-
-
-
-
-
-
-
-
 def get_ai() -> list[YOLO]:
     while (True):
         folders = [f.name for f in AI_FOLDER.iterdir() if f.is_dir()]
@@ -124,8 +118,7 @@ def get_ai() -> list[YOLO]:
 
 
 
-def use_train():
-
+def ai_with_input_folder():
     make_folder_structer(output_folder=RESULT_FOLDER)
     try:
         models = get_ai()
@@ -139,7 +132,35 @@ def use_train():
             if end != ".jpg" and end != ".png":
                 continue
             image_path = Path(os.path.join(INPUT_FOLDER, image_file))
+
             try_ai(yolo_model, image_path, RESULT_FOLDER)
+
+def cut_input_pictures():
+    try:
+       models = get_ai()
+    except ValueError as e:
+        print(e)
+        return
+
+def use_train():
+    while(True):
+       answer =  input(MENU).strip()
+       match answer:
+           case "0":
+               ai_with_input_folder()
+               return
+           case "1":
+               cut_input_pictures()
+               return
+           case "2":
+               return
+           case _:
+               print("Not a valid number, try again")
+               continue
+
+
+
+
 
 
 def make_classes_file(names: dict[int,str], output_folder: Path) -> Path:
@@ -159,7 +180,6 @@ def make_classes_file(names: dict[int,str], output_folder: Path) -> Path:
         Returns:
             Path: The path to the classes.txt file.
         """
-
     save_path: str = os.path.join(output_folder, "classes.txt")
 
     existing: set[str] = set()
@@ -185,7 +205,8 @@ def make_folder_structer(output_folder: Path, delete_files: bool = True):
     with two subfolders inside it: "labels" and "images".
 
     Args:
-        output_folder (str): Path to the base output folder."""
+        output_folder (str): Path to the base output folder.
+        """
     labels_path: str = os.path.join(output_folder, "labels")
     if delete_files and os.path.isfile(os.path.join(output_folder, "classes.txt")):
         for images_file in os.listdir(labels_path):

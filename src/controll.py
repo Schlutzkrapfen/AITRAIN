@@ -199,8 +199,26 @@ def check_if_images_labels_exits(images_path:Path, text_path:Path) -> bool:
     return True
 
 
-def check_if_duplicates_exist(images_path: Path, delete_automatic: bool = False) -> bool:
-    """goes true the image folder and returns stops and aks what it should with duplicated images"""
+def check_if_duplicates_exist(images_path: Path, delete_not_automatic: bool = False) -> bool:
+    """
+        Scan a folder for duplicate images based on file content hashing.
+
+        Walks through `images_path`, computes a hash for every file, and groups
+        files that share the same hash (i.e. exact duplicates). If duplicates
+        are found, keeps the first file in each group and removes the rest.
+        Depending on `delete_automatic`, the user may be prompted to confirm
+        the action before deletion.
+
+        Args:
+            images_path (Path): Path to the folder containing the images to check.
+            delete_not_automatic (bool, optional): If True, prompts the user for
+                confirmation before deleting duplicates. If False, duplicates
+                are removed automatically without prompting. Defaults to False.
+
+        Returns:
+            bool: True if duplicates were found (and handled), False if no
+                duplicates were found.
+        """
     hash_map = defaultdict(list)
 
     # 1. Hash every file — O(n)
@@ -212,7 +230,7 @@ def check_if_duplicates_exist(images_path: Path, delete_automatic: bool = False)
         file_hash = hash_file(Path(filepath))
         hash_map[file_hash].append(filepath)
 
-    # 2. Filter to only groups with more than one file
+    # 2. Filter to only groups with more than one fils) > e
     duplicate_groups = [paths for paths in hash_map.values() if len(paths) > 1]
 
     if not duplicate_groups:
@@ -220,7 +238,7 @@ def check_if_duplicates_exist(images_path: Path, delete_automatic: bool = False)
         return False
     else:
         print(duplicate_groups)
-        if delete_automatic:
+        if delete_not_automatic:
             choice = _prompt_action(
                 len(duplicate_groups), item_type="image", reason_type="dubplicate"
             )
@@ -340,9 +358,6 @@ def check_files_exist(
     images_path = get_images_names(input_dir)
     text_path = get_text_files_names(text_dir)
     _bool = check_if_duplicates_exist(
-        images_path=input_dir, delete_automatic=deleted_automaticly
+        images_path=input_dir, delete_not_automatic=deleted_automaticly
     )
-    if not check_if_images_labels_exits(input_dir, text_dir):
-        return False
-    else:
-        return True
+    return not check_if_images_labels_exits(input_dir, text_dir)

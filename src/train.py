@@ -4,7 +4,6 @@ import os
 from pathlib import Path
 from datetime import datetime
 
-from numpy import mod
 import optuna
 from ultralytics import YOLO
 
@@ -262,8 +261,8 @@ def train(best=None, yaml_path:Path=Path("data.yaml"),test_run:bool = False,no_g
 
     if test_run:
         train_kwargs.update(
-            epochs=100,
-            patience=0,
+            epochs=10,
+            patience=10,
             batch=4,
             imgsz=256,
         )

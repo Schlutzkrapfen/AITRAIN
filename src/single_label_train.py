@@ -58,9 +58,9 @@ def make_yamls() -> list[Path]:
     paths:list[Path] = []
     for folder in folder_paths:
         single_label =Path(os.path.basename(folder))
-        folder_path = os.path.join(folder, "data.yaml")
+        folder_path = Path(os.path.join(folder, "data.yaml"))
         make_yaml(single_label, folder_path)
-        paths.append(Path(folder_path))
+        paths.append(folder_path)
     return paths
 
 
