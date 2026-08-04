@@ -50,7 +50,12 @@ def get_input(labels: dict[str, int], input_text: str,needs_two:bool= False) -> 
 
        Returns:
            list[int]: Unique label IDs entered, or `[-1]` if "done" was entered.
-       """
+        Raises:
+               ValueError: If an entered number does not correspond to any label id,
+                   if an entered value is neither a valid label name nor a valid
+                   numeric id, or if fewer than two labels are provided while
+                   `needs_two` is True.
+           """
     while True:
         answers = input(input_text).strip().split(",")
         numbers: list[int] = []

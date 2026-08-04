@@ -100,7 +100,7 @@ def get_label_from_ordered(path_to_labels: Path) -> list[Path]:
     labels_set = get_label_path(path_to_labels / "val").union(
         get_label_path(path_to_labels / "train")
     )
-    labels = sorted(list(labels_set))
+    labels = sorted(labels_set)
     return labels
 
 
@@ -120,7 +120,7 @@ def get_images_from_ordered(path_to_pictures: Path) -> list[Path]:
     images_set = get_images_path(path_to_pictures / "val").union(
         get_images_path(path_to_pictures / "train")
     )
-    images = sorted(list(images_set))
+    images = sorted(images_set)
     return images
 
 

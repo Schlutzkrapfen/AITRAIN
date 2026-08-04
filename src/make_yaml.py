@@ -8,7 +8,7 @@ def get_classes(classes_dir:Path) -> list[str]:
     try:
         with open(classes_dir, "r") as f:
             return [line.strip() for line in f if line.strip()]
-    except Exception as e:
+    except ValueError as e:
         raise ValueError(f"Error can't get classes:{e}")
 
 

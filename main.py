@@ -9,6 +9,7 @@ from make_yaml import make_yaml
 from split import split
 from summery import make_summery
 from train_starter import start_train
+from train_use import  use_train
 
 
 USER_DATA_DIR = "user_data"
@@ -22,14 +23,16 @@ classes_dir = base_dir / "classes.txt"
 
 MENU = """
 What do you want to do?
-  0 (default) - Everything (1-5)
+  0 (default) - Everything (1-6)
   1 - Check if there are Input Files
   2 - Split up the Input Files
   3 - Delete/Merges Labels
   4 - Train
   5 - Get a Summary
-  6 - Quit
+  6 - Test the AI
+  7 - Quit
 """
+
 
 def main():
     """Main Programm"""
@@ -62,6 +65,8 @@ def main():
             case "5":
                 make_summery()
             case "6":
+                use_train()
+            case "7":
                 break
             case _:
                 print(f"Invalid input '{answer}'. Please enter a number between 0 and 5.\n")

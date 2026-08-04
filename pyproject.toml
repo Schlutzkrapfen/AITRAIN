@@ -1,5 +1,4 @@
 
 [tool.ruff.lint]
 preview = true
-select = ["D103", "DOC"]
-ignore= ["DOC501"]
+extend-select = ["D103", "DOC"]
