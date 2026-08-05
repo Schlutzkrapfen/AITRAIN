@@ -314,10 +314,10 @@ def check_files_exist(
         if not deleted_automaticly:
             if _prompt_action(len(single_images), "image") == "r":
                 move_to_trash_folder(single_images, trash_folder, "image")
-                images_path = set([f for f in images_path if f not in single_images])
+                images_path = {f for f in images_path if f not in single_images}
         else:
             move_to_trash_folder(single_images, trash_folder, "image")
-            images_path = set([f for f in images_path if f not in single_images])
+            images_path = {f for f in images_path if f not in single_images}
 
     # Check labels missing images
     single_labels = labels_have_images(images_path, text_path, text_dir)

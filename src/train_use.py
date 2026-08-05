@@ -1,19 +1,26 @@
 #class YAMLFILE()
 import os
 from pathlib import Path
+from PIL import Image
+from numpy import imag
+from torch import FloatTensor
 from ultralytics import YOLO
 import ultralytics
 
 
 INPUT_FOLDER: Path = Path("./InputFolder/test")
+INPUT_IMAGES_FOLDER:Path =Path("./InputFolder/images" )
+INPUT_LABELS_FOLDER:Path =Path("./InputFolder/lables" )
 RESULT_FOLDER: Path = Path("./result")
 AI_FOLDER: Path = Path("./runs/detect")
 AI_POSITION:Path = Path("./weights")
 AI_GET_TEXT = """Which Ai Modell do you want (write done if you want to break): """
-MENU ="""What do you want to do:
-0: Use a test folder end add boxes
-1: Make a Picture for each label the Ai finds. (This makes more sense when the Modell hasen't had the same labels as they are now )
-2: Done
+MENU =f"""What do you want to do:
+0: Use an AI and the image from {INPUT_FOLDER} add labers.
+1: Make a picture for each label the AI finds from {INPUT_FOLDER}.
+2: Make a picture for each label the AI finds from {INPUT_IMAGES_FOLDER} and uses {INPUT_LABELS_FOLDER} to add labels
+   (this is only useful if the AI is trained with other labels).
+3: Done.
     """
 def get_correct_cls(names: dict, cls: int, classes_txt: Path) -> int:
     """
@@ -117,6 +124,20 @@ def get_ai() -> list[YOLO]:
             continue
 
 
+def cut_images(yolo_model:YOLO,image_path:Path, output_folder:Path):
+    #classes_txt = make_classes_file(yolo_model.names, output_folder)
+
+    filename, _ = os.path.splitext(os.path.basename(image_path))
+    save_path: Path = Path( os.path.join(output_folder, f"images/{filename}.png"))
+    results: list[ultralytics.engine.results.Results] = yolo_model(image_path)
+    img = Image.open(image_path)
+    for idx, prediction in enumerate(results[0].boxes.xywhn):
+        box:tuple[float,float,float,float] = (prediction[0].item(),prediction[1].item(),prediction[0].item()+ prediction[2].item(),prediction[1].item() +prediction[3].item())
+
+        #cropped_img = img.crop(box)
+        #cropped_img.save(save_path)
+
+
 
 def ai_with_input_folder():
     make_folder_structer(output_folder=RESULT_FOLDER)
@@ -135,26 +156,40 @@ def ai_with_input_folder():
 
             try_ai(yolo_model, image_path, RESULT_FOLDER)
 
+
+
 def cut_input_pictures():
+    make_folder_structer(output_folder=RESULT_FOLDER)
     try:
        models = get_ai()
     except ValueError as e:
         print(e)
         return
+    for yolo_model in models:
+        make_classes_file(yolo_model.names, RESULT_FOLDER)
+        for image_file in os.listdir(INPUT_FOLDER):
+            _, end = os.path.splitext(os.path.basename(image_file))
+            if end != ".jpg" and end != ".png":
+                continue
+            image_path = Path(os.path.join(INPUT_FOLDER, image_file))
+            cut_images(yolo_model,image_path,RESULT_FOLDER)
 
 def use_train():
     while(True):
        answer =  input(MENU).strip()
        match answer:
-           case "0":
+            case "0":
                ai_with_input_folder()
                return
-           case "1":
+            case "1":
                cut_input_pictures()
                return
-           case "2":
+            case "2":
+                cut_input_pictures()
+                return
+            case "3":
                return
-           case _:
+            case _:
                print("Not a valid number, try again")
                continue
 
