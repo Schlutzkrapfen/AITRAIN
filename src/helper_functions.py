@@ -213,6 +213,19 @@ def sanitize_folder_name(name: str)->str:
 
 
 def get_correspoinding_label_file(image_name:str,label_folder:Path)-> Path:
+    """Find the label file matching a given image name.
+
+        Args:
+            image_name: Name or path of the image file. Only the filename
+                stem (without extension) is used for matching.
+            label_folder: Directory to search for the matching .txt label file.
+
+        Returns:
+            Path to the matching label file.
+
+        Raises:
+            ValueError: If no matching label file is found.
+        """
     image_name = Path(image_name).stem
     for label in label_folder.iterdir():
         name, end = os.path.splitext(os.path.basename(label))
@@ -222,7 +235,31 @@ def get_correspoinding_label_file(image_name:str,label_folder:Path)-> Path:
             return label
     raise ValueError("No Label Found")
 
-def get_current_labels_as_dict(label_path:Path, ):
+def get_labels_as_dict(label_path:Path)-> dict[int,tuple[float,float,float,float]]:
+    """Read a YOLO-style label file into a dict.
+
+        Args:
+            label_path: Path to the label (.txt) file, where each line has
+                the format "class_id x y w h".
+
+        Returns:
+            Mapping from class id to its (x, y, w, h) tuple.
+        """
+    dictionar:dict[int,tuple[float,float,float,float]] = {}
     with open(label_path, "r") as fp:
         for line in fp:
             parts = line.split()
+            dictionar[int(parts[0])] = float(parts[1]),float(parts[2]),float(parts[3]),float(parts[4])
+    return dictionar
+
+def convert_yolo_tuple_to_box_tuple(yolo: tuple[float, float, float, float]) -> tuple[float, float, float, float]:
+        """Convert a YOLO format tuple to a bounding box tuple.
+
+        Args:
+            yolo: Tuple in YOLO format (x, y, width, height).
+
+        Returns:
+            Box coordinates as (left, top, right, bottom).
+        """
+        x, y, w, h = yolo
+        return x, y + h, x + w, y

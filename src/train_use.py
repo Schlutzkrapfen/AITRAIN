@@ -1,17 +1,15 @@
 #class YAMLFILE()
 import os
 from pathlib import Path
-from sys import path
-from typing_extensions import Dict, List, Tuple
 from PIL import Image
 from ultralytics import YOLO
 import ultralytics
-from helper_functions import get_correspoinding_label_file
+from helper_functions import convert_yolo_tuple_to_box_tuple, get_correspoinding_label_file, get_labels_as_dict
 
 
 INPUT_FOLDER: Path = Path("./InputFolder/test")
 INPUT_IMAGES_FOLDER:Path =Path("./InputFolder/images" )
-INPUT_LABELS_FOLDER:Path =Path("./InputFolder/lables" )
+INPUT_LABELS_FOLDER:Path =Path("./InputFolder/labels" )
 RESULT_FOLDER: Path = Path("./result")
 AI_FOLDER: Path = Path("./runs/detect")
 AI_POSITION:Path = Path("./weights")
@@ -125,16 +123,19 @@ def get_ai() -> list[YOLO]:
             continue
 
 
-def cut_images(yolo_model:YOLO,image_path:Path, output_folder:Path)->Dict[Path ,Tuple[float,float,float,float]]:
-
+def cut_images(yolo_model:YOLO,image_path:Path, output_folder:Path)->dict[Path ,tuple[float,float,float,float]]:
+    if not image_path.exists():
+           raise FileNotFoundError(f"Image not found: {image_path}")
+    if image_path.stat().st_size == 0:
+           raise ValueError(f"Image file is empty: {image_path}")
     filename, _ = os.path.splitext(os.path.basename(image_path))
 
     results = yolo_model(image_path)
     img = Image.open(image_path)
-    images: Dict[Path,Tuple[float,float,float,float]] = {}
+    images: dict[Path,tuple[float,float,float,float]] = {}
     for idx, prediction in enumerate(results[0].boxes.xyxy):
         left, top, right, bottom = prediction.tolist()
-        box:Tuple[float,float,float,float] = (left, top, right, bottom)
+        box:tuple[float,float,float,float] = (left, top, right, bottom)
 
         cropped_img = img.crop(box)
         save_path = Path(os.path.join(output_folder, f"images/{filename}_{idx}.png"))
@@ -162,12 +163,30 @@ def ai_with_input_folder():
 
             try_ai(yolo_model, image_path, RESULT_FOLDER)
 
-def add_labels_to_images(images: Dict[Path ,Tuple[float,float,float,float]],label_file:Path):
+def add_labels_to_images(images: dict[Path ,tuple[float,float,float,float]],label_dict:dict[int,tuple[float,float,float,float]]):
 
 
     for path in images.keys():
-        pass
+        for id in label_dict.keys():
+            image_tuple = images[path]
+            label_tuple = convert_yolo_tuple_to_box_tuple(label_dict[id])
 
+
+            if not check_if_label_is_inside(image_tuple,label_tuple):
+                continue
+            print("hit")
+
+
+
+
+
+def check_if_label_is_inside(image,label)->bool:
+    return (
+        image[0] <= label[2] and
+       image[2] >= label[0] and
+       image[3] <= label[1] and
+       image[1] >= label[3]
+     );
 
 def cut_input_pictures(input_folder: Path ):
     make_folder_structer(output_folder=RESULT_FOLDER)
@@ -177,19 +196,19 @@ def cut_input_pictures(input_folder: Path ):
         print(e)
         return
     for yolo_model in models:
-        make_classes_file(yolo_model.names, RESULT_FOLDER)
         for image_file in os.listdir(input_folder):
             name, end = os.path.splitext(os.path.basename(image_file))
             if end != ".jpg" and end != ".png":
                 continue
             image_path = Path(os.path.join(input_folder, image_file))
-            images = cut_images(yolo_model,image_path,RESULT_FOLDER)
             try:
+                images = cut_images(yolo_model,image_path,RESULT_FOLDER)
                 label:Path=  get_correspoinding_label_file(name,INPUT_LABELS_FOLDER)
-            except ValueError as e:
+            except (ValueError,FileNotFoundError) as e:
                 print(e)
                 continue
-            add_labels_to_images(images,label)
+            labels_dict = get_labels_as_dict(label)
+            add_labels_to_images(images,labels_dict)
 
 
 
