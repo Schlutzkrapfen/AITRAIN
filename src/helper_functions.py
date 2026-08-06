@@ -211,6 +211,7 @@ def sanitize_folder_name(name: str)->str:
         """
     return re.sub(r'[<>:"/\\|?*]', "_", name)
 
+
 def get_correspoinding_label_file(image_name:str,label_folder:Path)-> Path:
     image_name = Path(image_name).stem
     for label in label_folder.iterdir():
@@ -220,3 +221,8 @@ def get_correspoinding_label_file(image_name:str,label_folder:Path)-> Path:
         if name == image_name:
             return label
     raise ValueError("No Label Found")
+
+def get_current_labels_as_dict(label_path:Path, ):
+    with open(label_path, "r") as fp:
+        for line in fp:
+            parts = line.split()
