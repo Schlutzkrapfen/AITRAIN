@@ -1,6 +1,7 @@
 import re
 import shutil
 from pathlib import Path
+import os
 
 import yaml
 
@@ -209,3 +210,13 @@ def sanitize_folder_name(name: str)->str:
             str: The sanitized folder name.
         """
     return re.sub(r'[<>:"/\\|?*]', "_", name)
+
+def get_correspoinding_label_file(image_name:str,label_folder:Path)-> Path:
+    image_name = Path(image_name).stem
+    for label in label_folder.iterdir():
+        name, end = os.path.splitext(os.path.basename(label))
+        if end != ".txt":
+            continue
+        if name == image_name:
+            return label
+    raise ValueError("No Label Found")

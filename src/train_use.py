@@ -1,11 +1,12 @@
 #class YAMLFILE()
 import os
 from pathlib import Path
+from sys import path
+from typing_extensions import Dict, List, Tuple
 from PIL import Image
-from numpy import imag
-from torch import FloatTensor
 from ultralytics import YOLO
 import ultralytics
+from helper_functions import get_correspoinding_label_file
 
 
 INPUT_FOLDER: Path = Path("./InputFolder/test")
@@ -124,18 +125,23 @@ def get_ai() -> list[YOLO]:
             continue
 
 
-def cut_images(yolo_model:YOLO,image_path:Path, output_folder:Path):
-    #classes_txt = make_classes_file(yolo_model.names, output_folder)
+def cut_images(yolo_model:YOLO,image_path:Path, output_folder:Path)->Dict[Path ,Tuple[float,float,float,float]]:
 
     filename, _ = os.path.splitext(os.path.basename(image_path))
-    save_path: Path = Path( os.path.join(output_folder, f"images/{filename}.png"))
-    results: list[ultralytics.engine.results.Results] = yolo_model(image_path)
-    img = Image.open(image_path)
-    for idx, prediction in enumerate(results[0].boxes.xywhn):
-        box:tuple[float,float,float,float] = (prediction[0].item(),prediction[1].item(),prediction[0].item()+ prediction[2].item(),prediction[1].item() +prediction[3].item())
 
-        #cropped_img = img.crop(box)
-        #cropped_img.save(save_path)
+    results = yolo_model(image_path)
+    img = Image.open(image_path)
+    images: Dict[Path,Tuple[float,float,float,float]] = {}
+    for idx, prediction in enumerate(results[0].boxes.xyxy):
+        left, top, right, bottom = prediction.tolist()
+        box:Tuple[float,float,float,float] = (left, top, right, bottom)
+
+        cropped_img = img.crop(box)
+        save_path = Path(os.path.join(output_folder, f"images/{filename}_{idx}.png"))
+        save_path.parent.mkdir(parents=True, exist_ok=True)
+        cropped_img.save(save_path)
+        images[save_path] = box
+    return images
 
 
 
@@ -156,9 +162,14 @@ def ai_with_input_folder():
 
             try_ai(yolo_model, image_path, RESULT_FOLDER)
 
+def add_labels_to_images(images: Dict[Path ,Tuple[float,float,float,float]],label_file:Path):
 
 
-def cut_input_pictures():
+    for path in images.keys():
+        pass
+
+
+def cut_input_pictures(input_folder: Path ):
     make_folder_structer(output_folder=RESULT_FOLDER)
     try:
        models = get_ai()
@@ -167,14 +178,42 @@ def cut_input_pictures():
         return
     for yolo_model in models:
         make_classes_file(yolo_model.names, RESULT_FOLDER)
-        for image_file in os.listdir(INPUT_FOLDER):
-            _, end = os.path.splitext(os.path.basename(image_file))
+        for image_file in os.listdir(input_folder):
+            name, end = os.path.splitext(os.path.basename(image_file))
             if end != ".jpg" and end != ".png":
                 continue
-            image_path = Path(os.path.join(INPUT_FOLDER, image_file))
-            cut_images(yolo_model,image_path,RESULT_FOLDER)
+            image_path = Path(os.path.join(input_folder, image_file))
+            images = cut_images(yolo_model,image_path,RESULT_FOLDER)
+            try:
+                label:Path=  get_correspoinding_label_file(name,INPUT_LABELS_FOLDER)
+            except ValueError as e:
+                print(e)
+                continue
+            add_labels_to_images(images,label)
+
+
+
+
 
 def use_train():
+    """
+        Displays an interactive command-line menu for image processing and AI labeling.
+
+        Continuously prompts the user to select a specific operation regarding
+        dataset preparation and AI label generation. The loop breaks when a valid
+        operation is executed or the user chooses to exit.
+
+        Menu Options:
+            '0': Generates labels for images in `INPUT_FOLDER` using an AI model.
+                 (Calls `ai_with_input_folder()`)
+            '1': Extracts and saves cropped pictures for each label identified by
+                 the AI in `INPUT_FOLDER`.
+                 (Calls `cut_input_pictures()`)
+            '2': Extracts and saves cropped pictures from `INPUT_IMAGES_FOLDER`
+                 using pre-existing labels from `INPUT_LABELS_FOLDER`.
+                 (Calls `cut_input_pictures()`)
+            '3': Exits the menu.
+        """
     while(True):
        answer =  input(MENU).strip()
        match answer:
@@ -182,10 +221,10 @@ def use_train():
                ai_with_input_folder()
                return
             case "1":
-               cut_input_pictures()
+               cut_input_pictures(INPUT_FOLDER)
                return
             case "2":
-                cut_input_pictures()
+                cut_input_pictures(INPUT_IMAGES_FOLDER)
                 return
             case "3":
                return
