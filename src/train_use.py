@@ -163,16 +163,16 @@ def ai_with_input_folder():
 
             try_ai(yolo_model, image_path, RESULT_FOLDER)
 
-def add_labels_to_images(images: dict[Path ,tuple[float,float,float,float]],label_dict:dict[int,tuple[float,float,float,float]]):
+def add_labels_to_images(images: dict[Path ,tuple[float,float,float,float]],label_dict:dict[int,tuple[float,float,float,float]],img_width:int,img_height:int):
 
 
-    for path in images.keys():
-        for id in label_dict.keys():
-            image_tuple = images[path]
-            label_tuple = convert_yolo_tuple_to_box_tuple(label_dict[id])
+    for  image_tuple in images.values():
+        for id in label_dict.values():
+            label_tuple = convert_yolo_tuple_to_box_tuple(id,img_width,img_height)
 
 
             if not check_if_label_is_inside(image_tuple,label_tuple):
+                print(f"NO HIT: {image_tuple}, {label_tuple}")
                 continue
             print("hit")
 
@@ -205,10 +205,12 @@ def cut_input_pictures(input_folder: Path ):
                 images = cut_images(yolo_model,image_path,RESULT_FOLDER)
                 label:Path=  get_correspoinding_label_file(name,INPUT_LABELS_FOLDER)
             except (ValueError,FileNotFoundError) as e:
-                print(e)
+                print(f"ERROR: {e}")
                 continue
             labels_dict = get_labels_as_dict(label)
-            add_labels_to_images(images,labels_dict)
+            img_w, img_h = Image.open(image_path).size
+
+            add_labels_to_images(images,labels_dict,img_w,img_h)
 
 
 
