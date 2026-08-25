@@ -55,12 +55,15 @@ def make_file_structer(yaml_path:Path)-> list[Path]:
 
 def make_yamls() -> list[Path]:
     folder_paths = make_file_structer(Path("data.yaml"))
-    paths:list[Path] = []
+    paths: list[Path] = []
     for folder in folder_paths:
-        single_label =Path(os.path.basename(folder))
-        folder_path = Path(os.path.join(folder, "data.yaml"))
-        make_yaml(single_label, folder_path)
-        paths.append(folder_path)
+        class_name = os.path.basename(folder)
+        classes_file = Path(os.path.join(folder, "classes.txt"))
+        classes_file.write_text(class_name + "\n")
+
+        yaml_path = Path(os.path.join(folder, "data.yaml"))
+        make_yaml(classes_file, yaml_path)
+        paths.append(yaml_path)
     return paths
 
 
