@@ -252,7 +252,7 @@ def get_labels_as_dict(label_path:Path)-> dict[int,tuple[float,float,float,float
             dictionar[int(parts[0])] = float(parts[1]),float(parts[2]),float(parts[3]),float(parts[4])
     return dictionar
 
-def convert_yolo_tuple_to_box_tuple(yolo: tuple[float, float, float, float]) -> tuple[float, float, float, float]:
+def convert_yolo_tuple_to_box_tuple(yolo: tuple[float, float, float, float],image_width:int,image_height) -> tuple[float, float, float, float]:
         """Convert a YOLO format tuple to a bounding box tuple.
 
         Args:
@@ -262,4 +262,4 @@ def convert_yolo_tuple_to_box_tuple(yolo: tuple[float, float, float, float]) -> 
             Box coordinates as (left, top, right, bottom).
         """
         x, y, w, h = yolo
-        return x, y + h, x + w, y
+        return x*image_width, (y + h)*image_height, (x + w)*image_width, y*image_height
