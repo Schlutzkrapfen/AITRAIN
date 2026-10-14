@@ -22,7 +22,17 @@ FOLDER_STRUCTURE = ["images/train", "images/val", "labels/train", "labels/val"]
 
 
 def _make_folder_structure(trash_folder: Path):
-    """Create the required folder structure, prompting user to clear any that already exist."""
+    """Creates the required train/val folder structure.
+
+        Prompts the user once whether to clear existing folders (moving
+        contents to `trash_folder`); the choice applies to all folders.
+
+        Args:
+            trash_folder (Path): Destination for cleared files.
+
+        Raises:
+            PermissionError: If a folder cannot be created.
+        """
     choice = None
     for path in FOLDER_STRUCTURE:
         full_path = script_directory / path
@@ -37,13 +47,23 @@ def _make_folder_structure(trash_folder: Path):
             if choice == "y":
                 move_to_trash_folder(list(full_path.iterdir()), trash_folder, "file")
         except PermissionError:
-            print(f"Permission denied: unable to create '{full_path}'.")
-        except Exception as e:
-            print(f"Unexpected error at '{full_path}': {e}")
+            raise PermissionError(f"Permission denied: unable to create '{full_path}'.")
 
 
 def _get_split_ratio(text: str = "What percentage for training? (e.g. 80): ") -> float:
-    """Prompt user for a train/val split percentage and return it as a ratio."""
+    """Prompts the user for a train/val split percentage.
+
+        Repeatedly asks the user for input until a valid integer percentage
+        between 0 and 99 (inclusive) is entered, then converts it to a ratio.
+
+        Args:
+            text (str): The prompt message shown to the user. Defaults to
+                "What percentage for training? (e.g. 80): ".
+
+        Returns:
+            float: The entered percentage expressed as a ratio (e.g. 80
+            becomes 0.8).
+        """
     while True:
         amount = input(text).strip()
         if amount.isdigit() and 0 <= int(amount) < 100:
@@ -52,7 +72,22 @@ def _get_split_ratio(text: str = "What percentage for training? (e.g. 80): ") ->
 
 
 def split(input_dir: Path, text_dir: Path, trash_folder: Path):
-    """Split matched image/label pairs into train and val folders."""
+    """Splits matched image/label pairs into train and val folders.
+
+        Pairs sorted images from `input_dir` with sorted labels from
+        `text_dir`, copies them into train/val folders based on a
+        user-provided ratio, then optionally moves the originals to
+        `trash_folder`.
+
+        Args:
+            input_dir (Path): Directory with source images.
+            text_dir (Path): Directory with source labels.
+            trash_folder (Path): Destination for removed originals.
+
+        Note:
+            Pairing is by sorted order, not filename matching — mismatched
+            files between directories could misalign pairs.
+        """
     _make_folder_structure(trash_folder)
 
     images = sorted(get_images_path(input_dir))
@@ -174,6 +209,17 @@ def add_empty_pictures(
 
 
 def save_label_single_folder(classname_to_labels, split_prozent: float):
+    """Splits and saves label files into per-class train/val folders.
+
+       For each class, splits its labels into train/val subsets, copies
+       them into `single_label_runs/<class>/labels/{train,val}`, and
+       reformats each copy for its single-class context.
+
+       Args:
+           classname_to_labels (dict): Maps class name to its list of
+               label file paths.
+           split_prozent (float): Fraction (0-1) assigned to training.
+       """
     for split_type, current_label in classname_to_labels.items():
         sanitized_name = sanitize_folder_name(split_type)
         split_index = int(len(current_label) * split_prozent)
@@ -194,6 +240,17 @@ def save_label_single_folder(classname_to_labels, split_prozent: float):
 
 
 def save_pictures_single_folder(classname_to_images, split_prozent: float):
+    """Splits and copies image files into per-class train/val folders.
+
+        For each class, splits its images into train/val subsets according
+        to `split_prozent` and copies them into
+        `single_label_runs/<class>/images/{train,val}`.
+
+        Args:
+            classname_to_images (dict): Maps class name to its list of
+                image file paths.
+            split_prozent (float): Fraction (0-1) assigned to training.
+        """
     for split_type, current_images in classname_to_images.items():
         sanitize_name = sanitize_folder_name(split_type)
         split_index = int(len(current_images) * split_prozent)
@@ -209,6 +266,15 @@ def save_pictures_single_folder(classname_to_images, split_prozent: float):
 
 
 def formatt_lines(new_label: str, split_type: str) -> None:
+    """Filters and reindexes a label file for single-class training.
+
+       Keeps only lines matching the class ID for `split_type`, remaps
+       that ID to "0", and overwrites the file with the result.
+
+       Args:
+           new_label (str): Path to the label file to rewrite.
+           split_type (str): Class name used to look up the target ID.
+       """
     target_id = str(
         change_yaml_to_id_output(split_type)
     )  # ✅ Called once, YAML read once ever

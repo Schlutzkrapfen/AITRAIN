@@ -54,6 +54,17 @@ def make_file_structer(yaml_path:Path)-> list[Path]:
 
 
 def make_yamls() -> list[Path]:
+    """Generates per-class YAML configuration files.
+
+        Creates the folder structure via `make_file_structer`, then for each
+        resulting folder writes a `classes.txt` file (named after the folder,
+        i.e. the class name) and generates a corresponding `data.yaml` file
+        using `make_yaml`.
+
+        Returns:
+            list[Path]: A list of paths to the generated `data.yaml` files,
+            one per class folder.
+    """
     folder_paths = make_file_structer(Path("data.yaml"))
     paths: list[Path] = []
     for folder in folder_paths:
@@ -97,14 +108,34 @@ def get_input(default_path: str = "single_label_runs") -> str:
 
 
 def train_on_single_label(test_run:bool = False):
+    """Trains a model on a single-label dataset.
+
+       Args:
+           test_run (bool): If True, runs a quick test training run.
+               Defaults to False.
+
+       Raises:
+           OSError: during training is caught and logged, not re-raised.
+       """
     path = get_input()
     try:
         train(None, Path(path),test_run=test_run)
-    except Exception as e:
-        print(f"Error:{e}")
+    except OSError as e:
+        raise OSError(f"Totall Failer:{e}")
 
 
 def train_on_each_label(test_run:bool = False):
+    """Trains a separate model for each label/class.
+
+        Generates per-class YAMLs, copies the dataset into place, then for
+        each class checks that its train/val image and label folders exist
+        before training. Classes with missing files are skipped; OSError
+        during training is caught, logged, and skipped.
+
+        Args:
+            test_run (bool): If True, runs a quick test training run.
+                Defaults to False.
+    """
 
     yaml_paths = make_yamls()
     copy_everything_for_single_traning(Path("images"), Path("labels"))
@@ -114,7 +145,7 @@ def train_on_each_label(test_run:bool = False):
         label_path = os.path.join(base_path, "labels/train")
         label_val_path = os.path.join(base_path, "labels/val")
         image_path = os.path.join(base_path, "images/train")
-        image_val_path = os.path.join(base_path, "labels/val")
+        image_val_path = os.path.join(base_path, "images/val")
         print(image_path)
         if not check_files_exist(
             Path(image_path), Path(label_path), deleted_automaticly=True
@@ -126,6 +157,6 @@ def train_on_each_label(test_run:bool = False):
             continue
         try:
             train(None, Path(path),test_run=test_run)
-        except Exception as e:
+        except OSError as e:
             print(f"this broke bacause: {e}")
             continue

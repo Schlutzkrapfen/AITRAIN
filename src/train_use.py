@@ -162,6 +162,7 @@ def ai_with_input_folder():
             image_path = Path(os.path.join(INPUT_FOLDER, image_file))
 
             try_ai(yolo_model, image_path, RESULT_FOLDER)
+    print(f"Added the labels to the {RESULT_FOLDER}")
 
 def add_labels_to_images(images: dict[Path ,tuple[float,float,float,float]],label_dict:dict[int,tuple[float,float,float,float]],img_width:int,img_height:int):
 
