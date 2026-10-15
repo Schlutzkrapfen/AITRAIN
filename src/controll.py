@@ -79,6 +79,8 @@ def check_if_labels_empty(labels_path:list[Path])->list[Path]:
             empty.append(labels)
 
     print(f"Empty labels: {len(empty)}")
+    if len(empty) == 0:
+        return empty
     print(empty[:10])
     return empty
 
@@ -306,6 +308,7 @@ def check_files_exist(
     text_path = get_text_files_names(text_dir)
     print(f"texts: {text_path}")
     if not check_if_images_labels_exits(input_dir,text_dir):
+        print("No labels or pictures exist for training.")
         return False
 
     # Check images missing labels
@@ -360,4 +363,4 @@ def check_files_exist(
     _bool = check_if_duplicates_exist(
         images_path=input_dir, delete_not_automatic=deleted_automaticly
     )
-    return not check_if_images_labels_exits(input_dir, text_dir)
+    return  check_if_images_labels_exits(input_dir, text_dir)

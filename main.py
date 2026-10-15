@@ -69,7 +69,8 @@ def main():
             case "7":
                 break
             case _:
-                print(f"Invalid input '{answer}'. Please enter a number between 0 and 5.\n")
+
+                print(f"Invalid input '{answer}'. Please enter a number between 0 and 7.\n")
                 continue
         print("finished")
         answer = (
